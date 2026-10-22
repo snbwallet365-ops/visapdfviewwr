@@ -1,0 +1,1 @@
+{"routes":[{"path":"/","title":"VisaMOTion Home"},{"path":"/auth","title":"Sign in"},{"path":"/document-suite","title":"VisaMOTion Document Suite"},{"path":"/cases","title":"Cases"},{"path":"/cases/new","title":"New Applicant"},{"path":"/cases/:caseId","title":"Case Details"},{"path":"/chat","title":"Visa Assistant"},{"path":"/chat/:threadId","title":"Chat Thread"}]}

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recruitment Document Suite - Six Countries, 30 Templates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#12110f;--paper:#fbfaf6;--paper2:#f2efe6;--line:#ddd8ca;--muted:#6f6a5e;--accent:#7a1f1f}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink)}
+  body{font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.5}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff 0%,var(--paper2) 100%)}
+  .top{display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);gap:10px;flex-wrap:wrap}
+  .top b{color:var(--accent);font-weight:600}
+  .hero{display:grid;grid-template-columns:1.5fr .8fr;gap:34px;padding:34px 0 36px;align-items:end}
+  h1{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(36px,5vw,64px);line-height:.98;margin:0 0 14px;letter-spacing:-.01em}
+  h1 em{color:var(--accent);font-style:italic}
+  .lede{max-width:60ch;color:#3a372f;font-size:15.5px;margin:0}
+  .flags{display:flex;gap:14px;margin-bottom:18px}
+  .flags .f{width:64px}
+  .flags .bar{display:flex;height:5px}
+  .flags .bar i{flex:1}
+  .flags .nm{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);margin-top:5px;text-transform:uppercase}
+  .statcard{border:1px solid var(--line);background:#fff;padding:18px 20px}
+  .statrow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .statrow:last-child{border-bottom:0}
+  .statrow span:first-child{color:var(--muted)}
+  .statbig{font-family:"Instrument Serif",serif;font-size:46px;line-height:1;color:var(--accent);margin:0 0 2px}
+  .statbig small{font-family:Inter,sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-top:8px}
+  main{padding:30px 0 60px}
+  .country{margin:0 0 34px}
+  .chead{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:14px}
+  .chead .bar{display:flex;height:22px;width:34px}
+  .chead .bar i{flex:1}
+  .chead h2{font-family:"Instrument Serif",serif;font-weight:400;font-size:30px;margin:0;line-height:1}
+  .chead .meta{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);text-align:right;line-height:1.7}
+  .chead .meta b{color:var(--accent);font-weight:600}
+  .note{font-size:12.5px;color:var(--muted);margin:-6px 0 12px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .doc{border:1px solid var(--line);background:#fff;padding:15px 17px 14px;display:flex;flex-direction:column;transition:.15s ease}
+  .doc:hover{border-color:#bfb6a2;transform:translateY(-1px);box-shadow:0 10px 26px -20px #000}
+  .doc .id{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--accent);letter-spacing:.08em;display:flex;justify-content:space-between;gap:8px}
+  .doc .pg{color:var(--muted)}
+  .doc h3{font-family:"Instrument Serif",serif;font-weight:400;font-size:20.5px;line-height:1.12;margin:7px 0 5px}
+  .doc .sub{font-size:12px;color:var(--muted);margin:0 0 10px}
+  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
+  .chip{font-size:10px;letter-spacing:.03em;border:1px solid var(--line);background:var(--paper2);padding:1px 6px;color:#4a463c}
+  .links{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;padding:6px 11px;background:var(--ink);color:#fff;text-decoration:none;font-weight:600;font-size:11.5px}
+  .btn:hover{background:var(--accent)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--ink);background:#fff}
+  .lower{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;margin-top:12px}
+  .panel{border-top:2px solid var(--accent);padding-top:14px}
+  .panel h3{font-family:"Instrument Serif",serif;font-weight:400;font-size:22px;margin:0 0 10px}
+  .panel p{margin:0 0 9px;font-size:13px;color:#3a372f}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  code{font-family:"JetBrains Mono",monospace;font-size:11px;background:var(--paper2);border:1px solid var(--line);padding:1px 4px}
+  .steps{list-style:none;padding:0;margin:0;counter-reset:s}
+  .steps li{counter-increment:s;position:relative;padding:0 0 11px 30px;font-size:13px}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:0;width:19px;height:19px;background:var(--ink);color:#fff;font-family:"JetBrains Mono",monospace;font-size:10px;display:grid;place-items:center}
+  .warn{border-left:3px solid var(--accent);background:#fdf7f2;padding:11px 14px;font-size:12px;color:#4a372f;margin-top:12px}
+  footer{border-top:1px solid var(--line);padding:18px 0 34px;font-size:11.5px;color:var(--muted)}
+  .frow{display:grid;grid-template-columns:1fr auto;gap:14px}
+  @media(max-width:900px){
+    .hero{grid-template-columns:1fr;gap:22px}
+    .grid{grid-template-columns:1fr}
+    .lower{grid-template-columns:1fr;gap:24px}
+    .wrap{padding:0 18px}
+    .chead{grid-template-columns:auto 1fr;gap:10px}
+    .chead .meta{grid-column:1/-1;text-align:left}
+    .flags{flex-wrap:wrap;gap:10px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div><b>RECRUITMENT DOCUMENT SUITE</b> · Six destination countries · 30 templates</div>
+      <div>Rev. 2026.1 · fillable A4 PDF</div>
+    </div>
+    <div class="hero">
+      <div>
+        <div class="flags"><div class="f"><div class="bar"><i style="background:#c6363c"></i><i style="background:#0c4076"></i><i style="background:#ffffff"></i></div><div class="nm">SRB</div></div><div class="f"><div class="bar"><i style="background:#e30a17"></i><i style="background:#ffffff"></i><i style="background:#e30a17"></i></div><div class="nm">TUR</div></div><div class="f"><div class="bar"><i style="background:#ed2939"></i><i style="background:#ffffff"></i><i style="background:#ed2939"></i></div><div class="nm">SGP</div></div><div class="f"><div class="bar"><i style="background:#cc0001"></i><i style="background:#ffffff"></i><i style="background:#010066"></i></div><div class="nm">MYS</div></div><div class="f"><div class="bar"><i style="background:#006c35"></i><i style="background:#ffffff"></i><i style="background:#006c35"></i></div><div class="nm">KSA</div></div><div class="f"><div class="bar"><i style="background:#ce1126"></i><i style="background:#ffffff"></i><i style="background:#ce1126"></i></div><div class="nm">BHR</div></div></div>
+        <h1>Thirty documents to place a<br><em>Bangladeshi</em> worker abroad.</h1>
+        <p class="lede">One pack per destination: agency authority, the employment contract in the local statutory
+        form, the work-permit or visa application, the compliance declaration that country checks hardest, and the
+        medical or repatriation undertaking. Every file is a fillable A4 PDF with consistent field names and a filled
+        sample beside it.</p>
+      </div>
+      <div class="statcard">
+        <div class="statbig">30<small>PDF templates</small></div>
+        <div class="statrow"><span>Countries</span><b>6</b></div>
+        <div class="statrow"><span>Total pages</span><b>72</b></div>
+        <div class="statrow"><span>Fillable fields</span><b>1,461</b></div>
+        <div class="statrow"><span>Filled samples</span><b>30</b></div>
+        <div class="statrow"><span>Languages</span><b>EN · SR · TR · BM · AR</b></div>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <section class="country">
+    <div class="chead">
+      <div class="bar"><i style="background:#c6363c"></i><i style="background:#0c4076"></i><i style="background:#ffffff"></i></div>
+      <h2>Serbia</h2>
+      <div class="meta">Labour Law 109/2025 · Art. 84–93<br>SR · EN · <b>15 pages</b> · 195 fields</div>
+    </div>
+    <p class="note">Single permit (NES), Type D visa, notarised power of attorney with apostille.</p>
+    <div class="grid">
+      <article class="doc">
+        <div class="id"><span>SRB-PDF-1</span><span class="pg">3 pages · 25 fields</span></div>
+        <h3>Agency Representation Power of Attorney</h3>
+        <p class="sub">Authorises a licensed agency to file the labour market test, the unified permit and the visa file — with express limits.</p>
+        <div class="chips"><span class="chip">Notary + apostille</span><span class="chip">Revocable</span><span class="chip">Dual language</span></div>
+        <div class="links"><a class="btn" href="SRB-PDF-1-Agency-Representation-Power-of-Attorney.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SRB-PDF-1-Agency-Representation-Power-of-Attorney.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>SRB-PDF-2</span><span class="pg">3 pages · 39 fields</span></div>
+        <h3>Serbian Labour Code Bilingual Contract</h3>
+        <p class="sub">Full employment contract in Serbian and English with the mandatory elements of art. 33 of the Labour Law.</p>
+        <div class="chips"><span class="chip">Art. 33 elements</span><span class="chip">Bilingual</span><span class="chip">Plain wording</span></div>
+        <div class="links"><a class="btn" href="SRB-PDF-2-Serbian-Labour-Code-Bilingual-Employment-Contract.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SRB-PDF-2-Serbian-Labour-Code-Bilingual-Employment-Contract.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>SRB-PDF-3</span><span class="pg">3 pages · 42 fields</span></div>
+        <h3>Type D Visa Application &amp; Sponsor Guarantee</h3>
+        <p class="sub">Employer&#x27;s sponsor guarantee and supporting letter for the long-stay visa file.</p>
+        <div class="chips"><span class="chip">Sponsor letter</span><span class="chip">Funds statement</span><span class="chip">Accommodation</span></div>
+        <div class="links"><a class="btn" href="SRB-PDF-3-Type-D-Visa-Application-Employer-Sponsor-Guarantee.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SRB-PDF-3-Type-D-Visa-Application-Employer-Sponsor-Guarantee.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>SRB-PDF-4</span><span class="pg">3 pages · 53 fields</span></div>
+        <h3>NES Work Permit Application &amp; Declaration</h3>
+        <p class="sub">Single permit application with the employer&#x27;s labour-market-test declaration and full annex checklist.</p>
+        <div class="chips"><span class="chip">NES single permit</span><span class="chip">LMT declaration</span><span class="chip">Annex list</span></div>
+        <div class="links"><a class="btn" href="SRB-PDF-4-NES-Work-Permit-Application-Employer-Declaration.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SRB-PDF-4-NES-Work-Permit-Application-Employer-Declaration.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>SRB-PDF-5</span><span class="pg">3 pages · 36 fields</span></div>
+        <h3>Health, Accommodation &amp; Repatriation Undertaking</h3>
+        <p class="sub">Pre-departure medical, housing standard and return-ticket undertaking.</p>
+        <div class="chips"><span class="chip">Act 446 standard</span><span class="chip">Medical</span><span class="chip">Return ticket</span></div>
+        <div class="links"><a class="btn" href="SRB-PDF-5-Health-Accommodation-Repatriation-Undertaking.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SRB-PDF-5-Health-Accommodation-Repatriation-Undertaking.pdf" target="_blank">Filled sample</a></div>
+      </article>
+    </div>
+  </section>
+  <section class="country">
+    <div class="chead">
+      <div class="bar"><i style="background:#e30a17"></i><i style="background:#ffffff"></i><i style="background:#e30a17"></i></div>
+      <h2>Türkiye</h2>
+      <div class="meta">Law 4817 · Labour Law 4857 · ÇSGB<br>TR · EN · <b>12 pages</b> · 192 fields</div>
+    </div>
+    <p class="note">5:1 ratio waiver above TRY 50M net sales, 2026 minimum wage TRY 33,030 gross.</p>
+    <div class="grid">
+      <article class="doc">
+        <div class="id"><span>TUR-PDF-1</span><span class="pg">2 pages · 35 fields</span></div>
+        <h3>Embassy Power of Attorney</h3>
+        <p class="sub">Notarised power of attorney for the agency to act before the Turkish embassy and the ÇSGB.</p>
+        <div class="chips"><span class="chip">Noter</span><span class="chip">Apostille</span><span class="chip">Revocable</span></div>
+        <div class="links"><a class="btn" href="TUR-PDF-1-Embassy-Power-of-Attorney.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/TUR-PDF-1-Embassy-Power-of-Attorney.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>TUR-PDF-2</span><span class="pg">3 pages · 37 fields</span></div>
+        <h3>Labour Law Dual-Language Contract</h3>
+        <p class="sub">Employment contract under Law 4857 with the statutory wage, hours and leave terms.</p>
+        <div class="chips"><span class="chip">Law 4857</span><span class="chip">Bilingual</span><span class="chip">OT rates</span></div>
+        <div class="links"><a class="btn" href="TUR-PDF-2-Labour-Law-Dual-Language-Employment-Contract.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/TUR-PDF-2-Labour-Law-Dual-Language-Employment-Contract.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>TUR-PDF-3</span><span class="pg">3 pages · 48 fields</span></div>
+        <h3>ÇSGB Work Permit Application &amp; Sponsor Guarantee</h3>
+        <p class="sub">Work permit application with the employer&#x27;s sponsor guarantee and the company financials.</p>
+        <div class="chips"><span class="chip">ÇSGB online</span><span class="chip">Sponsor</span><span class="chip">Financials</span></div>
+        <div class="links"><a class="btn" href="TUR-PDF-3-CSGB-Work-Permit-Application-Sponsor-Guarantee.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/TUR-PDF-3-CSGB-Work-Permit-Application-Sponsor-Guarantee.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>TUR-PDF-4</span><span class="pg">2 pages · 40 fields</span></div>
+        <h3>5:1 Employee Ratio Declaration</h3>
+        <p class="sub">Declaration of the ratio of Turkish to foreign employees and the exemption calculation.</p>
+        <div class="chips"><span class="chip">5:1 rule</span><span class="chip">TRY 50M exemption</span><span class="chip">Payroll basis</span></div>
+        <div class="links"><a class="btn" href="TUR-PDF-4-Five-to-One-Employee-Ratio-Declaration.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/TUR-PDF-4-Five-to-One-Employee-Ratio-Declaration.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>TUR-PDF-5</span><span class="pg">2 pages · 32 fields</span></div>
+        <h3>Pre-Departure Medical &amp; Orientation Undertaking</h3>
+        <p class="sub">Medical fitness and orientation record signed before departure.</p>
+        <div class="chips"><span class="chip">Medical</span><span class="chip">Orientation</span><span class="chip">Safety</span></div>
+        <div class="links"><a class="btn" href="TUR-PDF-5-Pre-Departure-Medical-Orientation-Undertaking.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/TUR-PDF-5-Pre-Departure-Medical-Orientation-Undertaking.pdf" target="_blank">Filled sample</a></div>
+      </article>
+    </div>
+  </section>
+  <section class="country">
+    <div class="chead">
+      <div class="bar"><i style="background:#ed2939"></i><i style="background:#ffffff"></i><i style="background:#ed2939"></i></div>
+      <h2>Singapore</h2>
+      <div class="meta">EFMA · Employment Act · MOM<br>EN · <b>12 pages</b> · 217 fields</div>
+    </div>
+    <p class="note">S$5,000 security bond, S$60,000 medical cover, 44-hour week.</p>
+    <div class="grid">
+      <article class="doc">
+        <div class="id"><span>SGP-PDF-1</span><span class="pg">2 pages · 32 fields</span></div>
+        <h3>MOM Recruitment Agency Authorisation Letter</h3>
+        <p class="sub">Letter authorising a licensed EA to act on the employer&#x27;s behalf with MOM.</p>
+        <div class="chips"><span class="chip">EA licence</span><span class="chip">MOM</span><span class="chip">Revocable</span></div>
+        <div class="links"><a class="btn" href="SGP-PDF-1-MOM-Recruitment-Agency-Authorization-Letter.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SGP-PDF-1-MOM-Recruitment-Agency-Authorization-Letter.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>SGP-PDF-2</span><span class="pg">3 pages · 41 fields</span></div>
+        <h3>MOM Standard Work Permit Employment Contract</h3>
+        <p class="sub">In-principle approval contract with the statutory salary, hours and leave terms.</p>
+        <div class="chips"><span class="chip">IPA</span><span class="chip">44 h/week</span><span class="chip">Leave 7–16 d</span></div>
+        <div class="links"><a class="btn" href="SGP-PDF-2-MOM-Standard-Work-Permit-Employment-Contract.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SGP-PDF-2-MOM-Standard-Work-Permit-Employment-Contract.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>SGP-PDF-3</span><span class="pg">2 pages · 45 fields</span></div>
+        <h3>In-Principle Approval (IPA) Application Form</h3>
+        <p class="sub">Application particulars and the employer&#x27;s declarations for the Work Permit.</p>
+        <div class="chips"><span class="chip">IPA</span><span class="chip">S$35 fee</span><span class="chip">Declarations</span></div>
+        <div class="links"><a class="btn" href="SGP-PDF-3-In-Principle-Approval-IPA-Application-Form.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SGP-PDF-3-In-Principle-Approval-IPA-Application-Form.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>SGP-PDF-4</span><span class="pg">2 pages · 35 fields</span></div>
+        <h3>Security Bond &amp; Medical Insurance Undertaking</h3>
+        <p class="sub">S$5,000 bond and S$60,000 medical insurance undertaking with the no-recovery clause.</p>
+        <div class="chips"><span class="chip">S$5,000 bond</span><span class="chip">S$60,000 cover</span><span class="chip">PCP</span></div>
+        <div class="links"><a class="btn" href="SGP-PDF-4-Security-Bond-Medical-Insurance-Undertaking.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SGP-PDF-4-Security-Bond-Medical-Insurance-Undertaking.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>SGP-PDF-5</span><span class="pg">3 pages · 64 fields</span></div>
+        <h3>Workplace Safety &amp; Health Orientation Agreement</h3>
+        <p class="sub">Site hazard briefing, PPE issue and WSH commitments signed before deployment.</p>
+        <div class="chips"><span class="chip">WSH Act</span><span class="chip">PPE</span><span class="chip">Emergency</span></div>
+        <div class="links"><a class="btn" href="SGP-PDF-5-Workplace-Safety-Health-Orientation-Agreement.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/SGP-PDF-5-Workplace-Safety-Health-Orientation-Agreement.pdf" target="_blank">Filled sample</a></div>
+      </article>
+    </div>
+  </section>
+  <section class="country">
+    <div class="chead">
+      <div class="bar"><i style="background:#cc0001"></i><i style="background:#ffffff"></i><i style="background:#010066"></i></div>
+      <h2>Malaysia</h2>
+      <div class="meta">Employment Act 1955 · Act 446 · KDN<br>BM · EN · <b>11 pages</b> · 260 fields</div>
+    </div>
+    <p class="note">Levy RM 410 (plantation) / RM 250 (others), SOCSO 1.75%, minimum wage RM 1,700.</p>
+    <div class="grid">
+      <article class="doc">
+        <div class="id"><span>MYS-PDF-1</span><span class="pg">2 pages · 41 fields</span></div>
+        <h3>KDN Agency Appointment Power of Attorney</h3>
+        <p class="sub">Power of attorney for the KDN quota, VDR and FWCMS filings, with express limits.</p>
+        <div class="chips"><span class="chip">Commissioner for Oaths</span><span class="chip">KDN</span><span class="chip">FWCMS</span></div>
+        <div class="links"><a class="btn" href="MYS-PDF-1-KDN-Agency-Appointment-Power-of-Attorney.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/MYS-PDF-1-KDN-Agency-Appointment-Power-of-Attorney.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>MYS-PDF-2</span><span class="pg">3 pages · 62 fields</span></div>
+        <h3>Employment Act Dual-Language Contract</h3>
+        <p class="sub">Contract under Act 265 in Bahasa Malaysia and English with s. 19/60A/60F terms.</p>
+        <div class="chips"><span class="chip">Act 265</span><span class="chip">Bilingual</span><span class="chip">OT 1.5×</span></div>
+        <div class="links"><a class="btn" href="MYS-PDF-2-Employment-Act-Dual-Language-Contract.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/MYS-PDF-2-Employment-Act-Dual-Language-Contract.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>MYS-PDF-3</span><span class="pg">2 pages · 47 fields</span></div>
+        <h3>Calling Visa (VDR) Supporting Letter</h3>
+        <p class="sub">Employer&#x27;s covering letter and declarations to the Immigration Department.</p>
+        <div class="chips"><span class="chip">VDR</span><span class="chip">Declarations</span><span class="chip">Officer box</span></div>
+        <div class="links"><a class="btn" href="MYS-PDF-3-Calling-Visa-VDR-Supporting-Letter.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/MYS-PDF-3-Calling-Visa-VDR-Supporting-Letter.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>MYS-PDF-4</span><span class="pg">2 pages · 58 fields</span></div>
+        <h3>FWCMS Medical Screening &amp; Quota Form</h3>
+        <p class="sub">FOMEMA results and the employer&#x27;s quota and cost declarations.</p>
+        <div class="chips"><span class="chip">FOMEMA</span><span class="chip">Quota</span><span class="chip">No charge</span></div>
+        <div class="links"><a class="btn" href="MYS-PDF-4-FWCMS-Medical-Screening-Quota-Form.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/MYS-PDF-4-FWCMS-Medical-Screening-Quota-Form.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>MYS-PDF-5</span><span class="pg">2 pages · 52 fields</span></div>
+        <h3>PERKESO / SOCSO Registration &amp; Repatriation Guarantee</h3>
+        <p class="sub">SOCSO and EIS registration with the 1.75% contribution and the return guarantee.</p>
+        <div class="chips"><span class="chip">SOCSO</span><span class="chip">EIS</span><span class="chip">Return guarantee</span></div>
+        <div class="links"><a class="btn" href="MYS-PDF-5-PERKESO-SOCSO-Registration-Repatriation-Guarantee.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/MYS-PDF-5-PERKESO-SOCSO-Registration-Repatriation-Guarantee.pdf" target="_blank">Filled sample</a></div>
+      </article>
+    </div>
+  </section>
+  <section class="country">
+    <div class="chead">
+      <div class="bar"><i style="background:#006c35"></i><i style="background:#ffffff"></i><i style="background:#006c35"></i></div>
+      <h2>Saudi Arabia</h2>
+      <div class="meta">Royal Decree M/51 · Qiwa · WPS<br>AR · EN · <b>11 pages</b> · 294 fields</div>
+    </div>
+    <p class="note">Probation max 180 days, WPS wage transfer, end-of-service award art. 84.</p>
+    <div class="grid">
+      <article class="doc">
+        <div class="id"><span>KSA-PDF-1</span><span class="pg">2 pages · 48 fields</span></div>
+        <h3>Electronic Wakala (Agency Authorisation)</h3>
+        <p class="sub">Wakala to a licensed recruitment office with the fee and no-charge clauses.</p>
+        <div class="chips"><span class="chip">Qiwa</span><span class="chip">Musaned</span><span class="chip">Revocable</span></div>
+        <div class="links"><a class="btn" href="KSA-PDF-1-Electronic-Wakala-Agency-Authorisation.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/KSA-PDF-1-Electronic-Wakala-Agency-Authorisation.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>KSA-PDF-2</span><span class="pg">3 pages · 65 fields</span></div>
+        <h3>Labour Law Bilingual Employment Contract</h3>
+        <p class="sub">Arabic-first contract under M/51 with the art. 53, 84 and 98 terms.</p>
+        <div class="chips"><span class="chip">AR prevails</span><span class="chip">Art. 84</span><span class="chip">WPS</span></div>
+        <div class="links"><a class="btn" href="KSA-PDF-2-Labour-Law-Bilingual-Employment-Contract.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/KSA-PDF-2-Labour-Law-Bilingual-Employment-Contract.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>KSA-PDF-3</span><span class="pg">2 pages · 67 fields</span></div>
+        <h3>Embassy Visa Application &amp; Employer Endorsement</h3>
+        <p class="sub">Visa application endorsement with the document checklist and embassy box.</p>
+        <div class="chips"><span class="chip">Visa block</span><span class="chip">GAMCA</span><span class="chip">Embassy</span></div>
+        <div class="links"><a class="btn" href="KSA-PDF-3-Embassy-Visa-Application-Employer-Endorsement.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/KSA-PDF-3-Embassy-Visa-Application-Employer-Endorsement.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>KSA-PDF-4</span><span class="pg">2 pages · 60 fields</span></div>
+        <h3>GAMCA / Wafid Medical &amp; Health Declaration</h3>
+        <p class="sub">Approved-centre examination record and the worker&#x27;s health declaration.</p>
+        <div class="chips"><span class="chip">GAMCA</span><span class="chip">Wafid</span><span class="chip">Consent</span></div>
+        <div class="links"><a class="btn" href="KSA-PDF-4-GAMCA-Medical-Examination-Health-Declaration.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/KSA-PDF-4-GAMCA-Medical-Examination-Health-Declaration.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>KSA-PDF-5</span><span class="pg">2 pages · 54 fields</span></div>
+        <h3>WPS, Iqama &amp; Repatriation Commitment</h3>
+        <p class="sub">Wage protection, Iqama duties, final settlement and the right to complain.</p>
+        <div class="chips"><span class="chip">WPS</span><span class="chip">Iqama</span><span class="chip">Art. 84/85</span></div>
+        <div class="links"><a class="btn" href="KSA-PDF-5-WPS-Salary-Iqama-Repatriation-Commitment.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/KSA-PDF-5-WPS-Salary-Iqama-Repatriation-Commitment.pdf" target="_blank">Filled sample</a></div>
+      </article>
+    </div>
+  </section>
+  <section class="country">
+    <div class="chead">
+      <div class="bar"><i style="background:#ce1126"></i><i style="background:#ffffff"></i><i style="background:#ce1126"></i></div>
+      <h2>Bahrain</h2>
+      <div class="meta">Law 36/2012 · LMRA · GOSI<br>AR · EN · <b>11 pages</b> · 303 fields</div>
+    </div>
+    <p class="note">Permit BHD 195/year, admin BHD 5, job advert BHD 30, Bahrainisation levy.</p>
+    <div class="grid">
+      <article class="doc">
+        <div class="id"><span>BHR-PDF-1</span><span class="pg">2 pages · 45 fields</span></div>
+        <h3>LMRA Registered Agency Power of Attorney</h3>
+        <p class="sub">Power of attorney to an LMRA-licensed agency with the fee and passport limits.</p>
+        <div class="chips"><span class="chip">LMRA</span><span class="chip">Notary</span><span class="chip">Limits</span></div>
+        <div class="links"><a class="btn" href="BHR-PDF-1-LMRA-Agency-Power-of-Attorney.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/BHR-PDF-1-LMRA-Agency-Power-of-Attorney.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>BHR-PDF-2</span><span class="pg">3 pages · 77 fields</span></div>
+        <h3>Labour Law 36/2012 Dual-Language Contract</h3>
+        <p class="sub">Arabic-first contract under Law 36/2012 with wages, hours, leave and EOS.</p>
+        <div class="chips"><span class="chip">Law 36</span><span class="chip">AR prevails</span><span class="chip">EOS</span></div>
+        <div class="links"><a class="btn" href="BHR-PDF-2-Labour-Law-36-2012-Dual-Language-Contract.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/BHR-PDF-2-Labour-Law-36-2012-Dual-Language-Contract.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>BHR-PDF-3</span><span class="pg">2 pages · 66 fields</span></div>
+        <h3>LMRA Work Permit Application &amp; Declaration</h3>
+        <p class="sub">Permit application with the fee schedule and the employer&#x27;s declarations.</p>
+        <div class="chips"><span class="chip">BHD 195</span><span class="chip">BHD 5 / 30</span><span class="chip">Declarations</span></div>
+        <div class="links"><a class="btn" href="BHR-PDF-3-LMRA-Work-Permit-Application-Employer-Declaration.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/BHR-PDF-3-LMRA-Work-Permit-Application-Employer-Declaration.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>BHR-PDF-4</span><span class="pg">2 pages · 57 fields</span></div>
+        <h3>Bahrainisation Quota Declaration</h3>
+        <p class="sub">Workforce statement, reserved vacancies and the BHD 10 low-rate levy.</p>
+        <div class="chips"><span class="chip">Bahrainisation</span><span class="chip">BHD 10 levy</span><span class="chip">GOSI basis</span></div>
+        <div class="links"><a class="btn" href="BHR-PDF-4-Bahrainisation-Quota-Declaration.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/BHR-PDF-4-Bahrainisation-Quota-Declaration.pdf" target="_blank">Filled sample</a></div>
+      </article>
+      <article class="doc">
+        <div class="id"><span>BHR-PDF-5</span><span class="pg">2 pages · 58 fields</span></div>
+        <h3>Medical Fitness, CPR &amp; Repatriation Undertaking</h3>
+        <p class="sub">Approved-centre examination, CPR application and return undertaking.</p>
+        <div class="chips"><span class="chip">NHRA</span><span class="chip">CPR</span><span class="chip">Return</span></div>
+        <div class="links"><a class="btn" href="BHR-PDF-5-Medical-Fitness-CPR-Repatriation-Undertaking.pdf" target="_blank">Open PDF</a><a class="btn ghost" href="filled-samples/BHR-PDF-5-Medical-Fitness-CPR-Repatriation-Undertaking.pdf" target="_blank">Filled sample</a></div>
+      </article>
+    </div>
+  </section>
+  <div class="lower">
+    <div class="panel">
+      <h3>What every pack contains</h3>
+      <table>
+        <tr><th>Slot</th><th>Document</th><th>Why it exists</th></tr>
+        <tr><td>1</td><td>Agency authority</td><td>Lets a licensed agency file and collect on the employer's behalf; bounds what it may not do.</td></tr>
+        <tr><td>2</td><td>Employment contract</td><td>The statutory contract in the local language and English, with the wage, hours and leave the law requires.</td></tr>
+        <tr><td>3</td><td>Permit or visa application</td><td>The employer's application and endorsement, plus the officer's box.</td></tr>
+        <tr><td>4</td><td>Compliance declaration</td><td>The condition each authority tests hardest: the Turkish 5:1 ratio, the Saudi quota, Bahrainisation.</td></tr>
+        <tr><td>5</td><td>Medical / repatriation</td><td>Fitness, accommodation and the return obligation, in one signed record.</td></tr>
+      </table>
+      <div class="warn">Templates are issued for use by a licensed agency. They reproduce the statutory minimum terms;
+      local counsel should still check the current fee schedule and any sector-specific rule before signing.</div>
+    </div>
+    <div class="panel">
+      <h3>Using the files</h3>
+      <ol class="steps">
+        <li>Download the PDF for the destination country and open it in any reader that supports forms — Acrobat,
+        Preview, Chrome or Firefox.</li>
+        <li>Click each shaded box and type. Bracketed placeholders such as <code>[WORKER_NAME]</code> mark values that
+        repeat across the pack, so use the same spelling throughout.</li>
+        <li>Check every page, then print A4 single-sided. Signature and stamp areas are deliberately left unshaded.</li>
+        <li>Open the matching filled sample if you want to see how a completed page reads.</li>
+      </ol>
+      <p style="margin-top:14px"><b>Fees to remember</b> — the employer pays them, not the worker: Serbia NES and
+      visa fees, Türkiye ÇSGB fee, Singapore S$35 and the S$5,000 bond premium, Malaysia levy RM 410 / RM 250 and
+      FOMEMA, Saudi visa and GAMCA fees, Bahrain BHD 195 / BHD 5 / BHD 30.</p>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap frow">
+    <div>Recruitment Document Suite · 6 countries · 30 templates · 72 pages · 1,461 fields</div>
+    <div>Templates only — not legal advice.</div>
+  </div>
+</footer>
+</body>
+</html>
