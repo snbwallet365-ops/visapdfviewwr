@@ -272,9 +272,7 @@
     .mobile-only{ display:grid; }
     .topbar{ padding:6px 2px 8px 4px; gap:6px; }
     .seg{ display:none !important; }
-    #chatModeSeg{ display:flex; }
     .seg button{ padding:6px 11px; font-size:12px; }
-    #chatModeSeg button{ padding:5px 13px; font-size:11.5px; }
     .modebtn{ padding:6px 10px; font-size:11px; }
     .btn-glass, .btn-primary{ min-height:34px; }
     .hero-title{ font-size:26px; }
@@ -459,7 +457,7 @@
         <div class="max-w-3xl mx-auto">
           <div class="composer lg">
             <button class="w-8 h-8 rounded-full grid place-items-center text-[#8a8a94] hover:bg-black/5 press" onclick="toast('Attach a file — demo')"><i data-lucide="plus" class="w-5 h-5"></i></button>
-            <input id="prompt" placeholder="Ask anything…" autocomplete="off" onkeydown="if(event.key==='Enter')sendMsg()">
+            <input id="prompt" placeholder="Ask Nova anything…" autocomplete="off" onkeydown="if(event.key==='Enter')sendMsg()">
             <button class="modelchip flex items-center gap-1 text-[12.5px] font-medium text-[#5b5b66] px-2 py-1 rounded-lg hover:bg-black/5 shrink-0" onclick="cycleModel()">
               <span id="modelLabel">Reasoning</span><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
             </button>
@@ -858,7 +856,7 @@ const DEFAULT = () => ({
   instr:PRESETS.assistant, skills:SKILLS.map(s=>s.on), tools:TOOLS.map(t=>t.on),
   mem:[], runs:[], key:'', model:'gemini-2.5-flash', endpoint:'https://generativelanguage.googleapis.com/v1beta',
   bbKey:'', bbModel:'BU AI Agent', browser:'local-sim',
-  mode:'cloud', live:true, company:'VisaHOBe', chatMode:'agent'
+  mode:'cloud', live:true, company:'VisaHOBe'
 });
 let S = load();
 
@@ -1143,14 +1141,6 @@ function openMode(){
 }
 
 
-function setChatMode(m){
-  S.chatMode=m; save();
-  document.querySelectorAll('#chatModeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.cm===m));
-  document.querySelectorAll('#chatModeSeg button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.cm===m)));
-  toast(m==='agent'?'🤖 Agent mode — action first, verified deliverables':'💬 Chat mode — answer, points, suggestions, next steps');
-  const ph=document.getElementById('prompt');
-  if(ph) ph.placeholder = m==='agent' ? 'Give your agent a task to complete…' : 'Ask anything…';
-}
 
 /* ═══════════ CHAT ═══════════ */
 function syncIdentity(){
@@ -1259,7 +1249,7 @@ async function respond(text){
     await new Promise(r=>setTimeout(r,650));
     return localReply(text) + `\n\n_Simulated — add your Gemini key (Connect → Gemini) for live cloud answers, or stay in Local mode._`;
   }
-  const sys = S.chatMode==='agent' ? PRESETS.agent : brainContext();
+  const sys = brainContext();
   return callModel(sys, text, 2400);
 }
 function structuredAnswer(text, cloud){
@@ -2514,7 +2504,7 @@ function openShare(){
 
 /* ═══════════ BOOT ═══════════ */
 function initAll(){
-  renderNav(); renderConnectors(); renderDash(); setChatMode(S.chatMode||'agent'); syncIdentity(); renderSideSkills(); renderSkills(); renderBrain(); renderBuilder(); renderTools(); renderRuns(); setSuggestions(); renderTaskTemplates(); setMode(S.mode||'cloud'); renderModeTaskCard(); refreshIcons(); }
+  renderNav(); renderConnectors(); renderDash(); syncIdentity(); renderSideSkills(); renderSkills(); renderBrain(); renderBuilder(); renderTools(); renderRuns(); setSuggestions(); renderTaskTemplates(); setMode(S.mode||'cloud'); renderModeTaskCard(); refreshIcons(); }
 function renderModeTaskCard(){ const el=document.getElementById('engineState'); if(el) el.textContent = S.mode==='local'?'Local · on-device':'Cloud · model powered'; }
 window.addEventListener('resize',()=>{ if(window.innerWidth>900){ $('#sidebar').classList.remove('open'); const sc=$('#scrim'); sc.classList.remove('show'); sc.style.opacity=''; } });
 initAll();
