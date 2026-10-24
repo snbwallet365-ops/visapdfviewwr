@@ -655,7 +655,7 @@
     </section>
 
     <!-- ══════════ VIEW: DOCUMENTS ══════════ -->
-    <section class="view" id="view-docs">
+    <section class="view" id="view-documents">
       <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="docsWrap"></div></div>
     </section>
 
@@ -937,12 +937,13 @@ function go(v){
   if(v==='skills') renderSkills();
   if(v==='brain'){ renderBrain(); renderKnowledgeBoard(); }
   if(v==='dashboard') renderDash();
-  if(v==='documents') renderDocuments();
+  if(v==='documents'){ renderDocuments(); }
   if(v==='builder') renderBuilder();
   if(v==='runs') renderRuns();
   if(v==='tools') { renderTools(); }
   if(v==='brain') renderKnowledgeBoard();
   if(SECTIONS[v]) renderSection(v);
+
   const dk=document.getElementById("agentDock"); if(dk) dk.style.display=(v==="agent"&&window.innerWidth<=900)?"block":"none";
   const ms=document.querySelector("main.stage"); if(ms) ms.style.paddingBottom=(v==="agent"&&window.innerWidth<=900)?"124px":"";
   if(window.innerWidth<=900) toggleSidebar(false);
@@ -1021,8 +1022,8 @@ function toast(msg){
 /* ═══════════ RENDER: sidebar skills + brain ═══════════ */
 function renderSideSkills(){
   const on = SKILLS.filter((s,i)=>S.skills[i]);
-  $('#skillCount').textContent = on.length;
-  $('#sideSkills').innerHTML = on.slice(0,5).map(s=>`
+  const sc=$('#skillCount'); if(sc) sc.textContent = on.length;
+  const ss=$('#sideSkills'); if(ss) ss.innerHTML = on.slice(0,5).map(s=>`
     <div class="skillrow" onclick="go('skills')">
       <span class="dot" style="background:${s.color}"></span>
       <span class="truncate flex-1">${esc(s.name)}</span>
@@ -1035,10 +1036,11 @@ function renderSideSkills(){
   const l2 = document.getElementById('lvlBar2'); if(l2){ l2.style.width = pct+'%'; }
   const lbig = document.getElementById('lvlBig'); if(lbig) lbig.textContent='Level '+lvl;
   const lsub = document.getElementById('lvlSub'); if(lsub) lsub.textContent = on.length+' skills · '+S.mem.length+' memories';
-  $('#brainMemCount').textContent = S.mem.length + (S.mem.length===1?' memory':' memories');
-  $('#sideModel').textContent = S.engine;
+  const bmc=$('#brainMemCount'); if(bmc) bmc.textContent = S.mem.length + (S.mem.length===1?' memory':' memories');
+  const sm=$('#sideModel'); if(sm) sm.textContent = S.engine;
   const ctx = Math.min(96, 8 + S.mem.length*3 + on.length*2);
-  $('#sideCtx').style.width = ctx+'%'; $('#sideCtxPct').textContent = ctx+'%';
+  const sx=$('#sideCtx'); if(sx) sx.style.width = ctx+'%';
+  const sp=$('#sideCtxPct'); if(sp) sp.textContent = ctx+'%';
   refreshIcons();
 }
 
@@ -2302,7 +2304,7 @@ function renderDocuments(){
   refreshIcons();
 }
 
-const SECTIONS = {browser:rBrowser, files:rFiles, docs:rDocs, documents:rDocs, reports:rReports, analytics:rAnalytics,
+const SECTIONS = {browser:rBrowser, files:rFiles, documents:rDocs, reports:rReports, analytics:rAnalytics,
   email:rEmail, social:rSocial, crm:rCRM, workflows:rWorkflows, tasks:rTasks, research:rResearch,
   pdf:rPDF, studio:rStudio, business:rBusiness, settings:rSettings};
 function renderSection(v){
