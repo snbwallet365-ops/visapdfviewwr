@@ -1,60 +1,41 @@
-# VisaHOBe Agent — AI platform
+# VisaHOBe Agent — AI workspace
 
 Live: https://visahobe-agent-app.pages.bu.app/ · access code `666085`
 
-A single-file, installable web app (PWA): dashboard-first, with two independent flows.
+Single-file installable web app (PWA). Dashboard-first, with two independent flows.
 
-## Flows
+## Modules (sidebar)
 
-| | Chat | Agent |
-|---|---|---|
-| Purpose | Conversation only | Execution: browser, automation, workflows |
-| Input | Composer at the bottom of the chat | Task box + fixed prompt dock |
-| Output | Answer · Key Points · Suggestions · Next Steps | Preview panel + logged run |
+Chat · Agent · Files · Documents · Tasks · Reports · Social Media · Settings (plus Dashboard)
 
-### Agent flow (6 stages)
+## Chat
 
-1. **Analyze task** — intent, skills, runtime
-2. **Execution plan** — ordered steps
-3. **Live progress** — step-by-step console
-4. **Preview results** — output rendered before delivery
-5. **Approve & run** — sign-off (runs straight through by default)
-6. **Final output** — delivered, saved to Preview, logged to Tasks/Runs
+Conversation only. Fast replies, no execution. Answers always use:
+Answer · Key Points · Suggestions · Next Steps.
 
-Every run renders automatically — no confirmation needed. The preview panel is always on,
-with a fixed prompt box underneath on mobile so a task can be started from anywhere.
+## Agent
 
-## Sidebar modules
+Task → Analyze → Preview → Approve → Execute → Results.
 
-Dashboard · Chat · Agent · Browser · Files · Documents · Reports · Email · Social Media ·
-CRM · Knowledge Base · Research · Workflows · Tasks · Analytics · Settings
+- **Analyze** builds the plan and drafts the output — nothing runs yet.
+- **Live preview** has four tabs: Plan, Output, Files, Actions.
+- **Approve & run** is the only thing that executes.
+- **Results** renders the final output and logs the run to Tasks and the dashboard.
 
-## Built-in skills
+## Dashboard cards
 
-Research · Content Writing · SEO · Recruitment · Visa Operations · CRM · Reporting ·
-PDF Generator · Data Analysis · Project Management · Automation
-
-## Execution status
-
-`pending` → `running` → `reviewing` → `completed` / `failed`
-
-## Live validation
-
-Self-check · Output review · Error detection · Preview · Link validation — visible per run.
+Tasks · Agent Runs · Files · Documents · Reports · Social Media
 
 ## Runtime
 
-- **Gemini API** — model key entered in the app (Settings → Connect), stored in the browser only
-- **Browser Use** — optional key for real cloud browser sessions
-- **Playwright** — browser-side execution engine for the agent worker
-- **Local engine** — offline fallback with the same response formats
+- Gemini API (model key entered in the app, stored in the browser only)
+- Browser Use (optional key for real cloud browser sessions)
+- Playwright (browser-side execution engine)
+- Local engine fallback with identical response formats
 
 ## Files
 
-- `index.html` — the whole app
-- `manifest.json` — PWA manifest
-- `sw.js` — network-first service worker
-- `icon-512.png` — app icon
+`index.html` · `manifest.json` · `sw.js` · `icon-512.png`
 
 Upload all files to the root of any static host, then install from the browser menu
 (Android/desktop) or Share → Add to Home Screen (iOS).
