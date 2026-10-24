@@ -129,7 +129,8 @@
   /* ── Hero / chat ── */
   .hero-title{ font-size:clamp(24px,3.4vw,38px); font-weight:600; letter-spacing:-.03em; line-height:1.1; }
   .gtext{ background:linear-gradient(100deg,#0a84ff,#bf5af2 55%,#ff375f); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .composer{ border-radius:30px; padding:8px 8px 8px 16px; display:flex; align-items:center; gap:10px; transition:box-shadow .3s,background .3s; }
+  .composer{ border-radius:30px; padding:8px 8px 8px 16px; display:flex; align-items:center; gap:10px; transition:box-shadow .3s,background .3s; background:rgba(255,255,255,.93); box-shadow:inset 0 0 0 .5px rgba(0,0,0,.08),0 6px 20px -12px rgba(20,20,40,.35); }
+  .composer input{ background:transparent; outline:none; flex:1; min-width:0; }
   .composer:focus-within{ box-shadow:inset 0 1px 0 #fff,0 0 0 3px rgba(10,132,255,.18),0 18px 44px -14px rgba(20,20,40,.28); }
   .composer input, .composer textarea{ flex:1; min-width:0; background:transparent; border:none; outline:none; font-size:15px; color:#111; resize:none; font-family:inherit; }
   .composer input::placeholder{ color:#a1a1ab; }
@@ -166,9 +167,22 @@
 
   .mobile-only{ display:none; }
   #toast{ bottom: calc(96px + env(safe-area-inset-bottom)); }
-  .agentdock{ position:fixed; left:10px; right:10px; bottom:calc(8px + env(safe-area-inset-bottom)); z-index:42; display:none; pointer-events:none; }
-  .agentdock-in{ pointer-events:auto; max-width:760px; margin:0 auto; padding:8px 9px 9px; border-radius:22px;
-    background:rgba(255,255,255,.94); box-shadow:0 14px 40px -14px rgba(20,20,40,.35), inset 0 0 0 .5px rgba(0,0,0,.07); }
+
+  .agentsplit2{ display:flex; flex-direction:row; gap:10px; flex:1; min-height:0; padding:2px 2px 0; }
+  .agentmain{ flex:1; min-width:0; min-height:0; display:flex; flex-direction:column; }
+  .apreview{ width:340px; flex:0 0 340px; display:flex; flex-direction:column; min-height:0; padding:12px;
+    border-radius:22px; background:rgba(255,255,255,.72); box-shadow:inset 0 0 0 .5px rgba(0,0,0,.06),0 10px 30px -18px rgba(20,20,40,.3); }
+  #view-agent{ overflow:hidden; }
+  #view-agent .agentsplit2{ flex-direction:row; }
+  @media (max-width:1100px){
+    #view-agent{ display:flex; flex-direction:column; }
+    #view-agent .agentsplit2{ flex-direction:column !important; padding:0; overflow-y:auto; flex:1 1 auto; min-height:0; }
+    .agentmain{ flex:0 0 auto; min-height:auto; }
+    .agentmain #ahero{ flex:0 0 auto; min-height:220px; padding-top:10px; }
+    .agentmain #athread{ flex:0 0 auto; max-height:46vh; overflow:auto; }
+    .apreview{ width:auto; flex:0 0 auto; max-height:none; margin:8px 2px 0; padding:11px; }
+    #aPreview{ max-height:none; }
+  }
   .edgehint{ display:none; position:fixed; z-index:46; left:0; top:50%; transform:translateY(-50%); width:5px; height:74px; border-radius:0 5px 5px 0; background:linear-gradient(#0a84ff,#bf5af2); opacity:.5; }
   .scrim{ position:fixed; inset:0; background:rgba(12,12,24,.30); -webkit-backdrop-filter:none; backdrop-filter:none; z-index:40; display:none; }
   /* ── Mode switch ── */
@@ -414,8 +428,8 @@
       </div>
 
       <div class="hide-c flex flex-col gap-0">
-        <div class="navitem" onclick="toast('Files &amp; documents — demo viewer')"><i data-lucide="library"></i><span class="hide-c">Files</span></div>
-        <div class="navitem" onclick="toast('Settings — demo viewer')"><i data-lucide="settings"></i><span class="hide-c">Settings</span></div>
+        <div class="navitem" data-view="files"><i data-lucide="folder"></i><span class="hide-c">Files</span></div>
+        <div class="navitem" data-view="settings"><i data-lucide="settings"></i><span class="hide-c">Settings</span></div>
         <div class="navitem" onclick="lockSite()"><i data-lucide="lock"></i><span class="hide-c">Lock</span></div>
       </div>
     </div>
@@ -456,15 +470,14 @@
       <div class="px-1 pb-2">
         <div class="max-w-3xl mx-auto">
           <div class="composer lg">
-            <button class="w-8 h-8 rounded-full grid place-items-center text-[#8a8a94] hover:bg-black/5 press" onclick="toast('Attach a file — demo')"><i data-lucide="plus" class="w-5 h-5"></i></button>
+            <label class="w-8 h-8 rounded-full grid place-items-center text-[#8a8a94] hover:bg-black/5 press cursor-pointer" title="Attach a file"><i data-lucide="plus" class="w-5 h-5"></i><input type="file" class="hidden" onchange="uploadFile(this)"></label>
             <input id="prompt" placeholder="Ask Nova anything…" autocomplete="off" onkeydown="if(event.key==='Enter')sendMsg()">
             <button class="modelchip flex items-center gap-1 text-[12.5px] font-medium text-[#5b5b66] px-2 py-1 rounded-lg hover:bg-black/5 shrink-0" onclick="cycleModel()">
               <span id="modelLabel">Reasoning</span><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
             </button>
-            <button class="w-8 h-8 rounded-full grid place-items-center text-[#8a8a94] hover:bg-black/5 press" onclick="toast('Voice input — demo')"><i data-lucide="mic" class="w-4 h-4"></i></button>
+            <button class="w-8 h-8 rounded-full grid place-items-center text-[#8a8a94] hover:bg-black/5 press" onclick="voiceInput('prompt')" title="Voice input"><i data-lucide="mic" class="w-4 h-4"></i></button>
             <button class="sendbtn btn-primary press" onclick="sendMsg()"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
           </div>
-          <div class="text-[10.5px] text-[var(--muted)] text-center mt-3">AI can make mistakes. Verify important information. Runs on your key — nothing leaves your browser except your own API calls.</div>
         </div>
       </div>
     </section>
@@ -472,7 +485,47 @@
 
     <!-- ══════════ VIEW: AGENT (independent execution console) ══════════ -->
     <section class="view" id="view-agent">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="agentWrap"></div></div>
+      <div class="agentsplit2">
+        <div class="agentmain">
+          <div id="athread" class="scrollarea flex-1 hidden px-1">
+            <div class="max-w-3xl mx-auto pt-4 pb-2" id="athreadInner"></div>
+          </div>
+          <div id="ahero" class="flex-1 flex flex-col items-center justify-center px-2 pb-6">
+            <div class="w-14 h-14 rounded-[18px] grid place-items-center mb-5 lg" style="background:linear-gradient(135deg,#bf5af2,#5e5ce6)">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="8" width="16" height="11" rx="3.5"/><path d="M12 8V5"/><circle cx="9" cy="13.5" r="1.1" fill="#fff" stroke="none"/><circle cx="15" cy="13.5" r="1.1" fill="#fff" stroke="none"/></svg>
+            </div>
+            <h1 class="hero-title text-center mb-2">Task mode — <span class="gtext">analyze, preview, execute</span></h1>
+            <p class="text-[13.5px] text-[var(--muted)] text-center mb-7 max-w-md">Describe the outcome. The agent plans it, shows the preview, and runs only after you approve.</p>
+            <div class="w-full max-w-2xl flex flex-wrap justify-center gap-2 mb-3" id="aSuggest"></div>
+          </div>
+          <div class="px-1 pb-2">
+            <div class="max-w-3xl mx-auto">
+              <div class="composer lg lg-strong">
+                <label class="w-8 h-8 rounded-full grid place-items-center text-[#8a8a94] hover:bg-black/5 press cursor-pointer" title="Attach a file"><i data-lucide="plus" class="w-5 h-5"></i><input type="file" class="hidden" onchange="uploadFile(this)"></label>
+                <input id="atask" placeholder="Give the agent a task…" autocomplete="off" onkeydown="if(event.key==='Enter')agentSend()">
+                <button class="modelchip flex items-center gap-1 text-[12.5px] font-medium text-[#5b5b66] px-2 py-1 rounded-lg hover:bg-black/5 shrink-0" onclick="go('settings')">
+                  <span>Agent</span><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                </button>
+                <button class="sendbtn btn-primary press" onclick="agentSend()"><i data-lucide="play" class="w-4 h-4"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="apreview" id="aPreviewPanel">
+          <div class="flex items-center justify-between px-0.5 mb-2">
+            <div class="flex items-center gap-1.5"><span class="live-dot"></span>
+              <span class="text-[12px] font-semibold">Live preview</span></div>
+            <span class="pill" id="apvState" style="background:rgba(0,0,0,.05);color:#8a8a94">idle</span>
+          </div>
+          <div class="scrollarea flex-1 min-h-0 pr-0.5" id="aPreview"></div>
+          <div id="aApproveWrap" class="hidden pt-2">
+            <button class="btn-primary w-full py-2.5 text-[12.5px] font-medium press inline-flex items-center justify-center gap-1.5" onclick="agentApprove()">
+              <i data-lucide="badge-check" class="w-3.5 h-3.5"></i> Approve &amp; run
+            </button>
+          </div>
+        </aside>
+      </div>
     </section>
 
     <!-- ══════════ VIEW: BUILDER ══════════ -->
@@ -550,7 +603,7 @@
                 <i data-lucide="search" class="w-3.5 h-3.5 text-[var(--muted)]"></i>
                 <input id="skillSearch" placeholder="Search skills" class="bg-transparent outline-none text-[12.5px] w-36" oninput="renderSkills()">
               </div>
-              <button class="btn-primary px-3.5 py-2 text-[12.5px] font-medium press" onclick="toast('Custom skill composer — demo')">+ New skill</button>
+              <button class="btn-primary px-3.5 py-2 text-[12.5px] font-medium press" onclick="newSkill()">+ New skill</button>
             </div>
           </div>
           <div class="gridc sm:grid-cols-2 lg:grid-cols-3" id="skillGrid"></div>
@@ -723,20 +776,6 @@
 
 
 <!-- ══════════ MODALS ══════════ -->
-<div id="agentDock" class="agentdock">
-  <div class="agentdock-in">
-    <div class="flex items-center justify-between mb-1.5 px-0.5">
-      <span class="text-[10.5px] font-semibold uppercase tracking-[.08em] text-[var(--muted)]">Agent prompt</span>
-      <span class="text-[10px] text-[var(--muted)]" id="dockState">analyze → preview</span>
-    </div>
-    <div class="composer lg">
-      <button class="w-8 h-8 rounded-full grid place-items-center text-[#8a8a94] hover:bg-black/5 press shrink-0" onclick="go('agent')" title="Open agent"><i data-lucide="bot" class="w-4 h-4"></i></button>
-      <input id="dockPrompt" placeholder="Give your agent a task…" autocomplete="off" onkeydown="if(event.key==='Enter')dockRun()">
-      <button class="sendbtn btn-primary press shrink-0" onclick="dockRun()"><i data-lucide="play" class="w-4 h-4"></i></button>
-    </div>
-  </div>
-</div>
-
 <div id="modalWrap" class="fixed inset-0 z-[60] hidden items-center justify-center p-4" style="background:rgba(15,15,25,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)">
   <div class="lg lg-strong w-full max-w-md rounded-[28px] p-6" style="animation:fade .3s var(--ease)">
     <div class="flex items-center justify-between mb-4">
@@ -859,6 +898,7 @@ const DEFAULT = () => ({
   mode:'cloud', live:true, company:'VisaHOBe'
 });
 let S = load();
+if(S.skillDefs && Array.isArray(S.skillDefs)){ S.skillDefs.forEach(d=>{ if(!SKILLS.some(k=>k.id===d.id)) SKILLS.push(Object.assign({on:true},d)); }); }
 
 function load(){
   try{ const raw = localStorage.getItem('useai_agent'); if(raw) return Object.assign(DEFAULT(), JSON.parse(raw)); }catch(e){}
@@ -925,14 +965,12 @@ function go(v){
   if(v==='skills') renderSkills();
   if(v==='brain'){ renderBrain(); renderKnowledgeBoard(); }
   if(v==='dashboard') renderDash();
-  if(v==='documents'){ renderDocuments(); }
   if(v==='builder') renderBuilder();
   if(v==='runs') renderRuns();
   if(v==='tools') { renderTools(); }
   if(v==='brain') renderKnowledgeBoard();
   if(SECTIONS[v]) renderSection(v);
 
-  const dk=document.getElementById("agentDock"); if(dk) dk.style.display=(v==="agent"&&window.innerWidth<=900)?"block":"none";
   const ms=document.querySelector("main.stage"); if(ms) ms.style.paddingBottom=(v==="agent"&&window.innerWidth<=900)?"124px":"";
   if(window.innerWidth<=900) toggleSidebar(false);
 }
@@ -1009,6 +1047,7 @@ function toast(msg){
 
 /* ═══════════ RENDER: sidebar skills + brain ═══════════ */
 function renderSideSkills(){
+  const guard=document.getElementById('navList'); if(!guard) return;
   const on = SKILLS.filter((s,i)=>S.skills[i]);
   const sc=$('#skillCount'); if(sc) sc.textContent = on.length;
   const ss=$('#sideSkills'); if(ss) ss.innerHTML = on.slice(0,5).map(s=>`
@@ -1247,7 +1286,7 @@ async function respond(text){
   if(S.mode==='local'){ await new Promise(r=>setTimeout(r,420)); return localReply(text); }
   if(!hasCloudKey()){
     await new Promise(r=>setTimeout(r,650));
-    return localReply(text) + `\n\n_Simulated — add your Gemini key (Connect → Gemini) for live cloud answers, or stay in Local mode._`;
+    return localReply(text) + `\n\n_Answered by the built-in engine. Add a Gemini key in Settings for model-powered answers._`;
   }
   const sys = brainContext();
   return callModel(sys, text, 2400);
@@ -1438,7 +1477,7 @@ async function startTask(){
   box.innerHTML = `<div class="mini-h">Goal</div>
     <div class="goalbar">${esc(goal)}</div>
     <div class="flex items-center gap-1.5 mb-2 flex-wrap">
-      <span class="pill" style="background:${S.mode==='local'?'rgba(191,90,242,.12)':'rgba(10,132,255,.1)'};color:${S.mode==='local'?'#8b3fd0':'#0a6bd0'}">${S.mode==='local'?'Local':(hasCloudKey()?'Cloud · Gemini':'Cloud · simulation')}</span>
+      <span class="pill" style="background:${S.mode==='local'?'rgba(191,90,242,.12)':'rgba(10,132,255,.1)'};color:${S.mode==='local'?'#8b3fd0':'#0a6bd0'}">${S.mode==='local'?'Local':(hasCloudKey()?'Cloud · Gemini':'Built-in engine')}</span>
       ${S.bbKey?'<span class="pill" style="background:rgba(48,209,88,.12);color:#1d9b41">BU browser</span>':''}
       <span class="text-[10.5px] text-[var(--muted)]" id="taskProgress">0 / ${steps.length}</span>
     </div>
@@ -1554,6 +1593,29 @@ function openFull(){
 
 
 
+
+/* ═══════════ REAL UTILITIES ═══════════ */
+function voiceInput(targetId){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ toast('Voice input is not supported in this browser'); return; }
+  const r=new SR(); r.lang=navigator.language||'en-US'; r.interimResults=false; r.maxAlternatives=1;
+  const inp=document.getElementById(targetId);
+  r.onresult=e=>{ const t=e.results[0][0].transcript; if(inp){ inp.value=(inp.value?inp.value+' ':'')+t; inp.focus(); } };
+  r.onerror=()=>toast('Voice input cancelled');
+  r.start(); toast('Listening…');
+}
+function newSkill(){
+  modal('New skill', `<input id="nsk" placeholder="Skill name, e.g. Taxes & compliance" class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px] mb-2" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)">
+    <textarea id="nskd" rows="2" placeholder="What it should do" class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px]" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)"></textarea>`,
+    [{label:'Cancel',fn:closeModal},{label:'Add skill',cls:'btn-primary',fn:()=>{
+      const n=($('#nsk')?.value||'').trim(); if(!n){ toast('Name it first'); return; }
+      SKILLS.push({id:'custom'+SKILLS.length, name:n, icon:'sparkles', color:'#bf5af2', desc:($('#nskd')?.value||'Custom skill').trim(), on:true});
+      S.skills.push(true); save(); S.skillDefs=SKILLS.map(x=>({id:x.id,name:x.name,icon:x.icon,color:x.color,desc:x.desc})); save();
+      closeModal(); renderSkills(); renderSideSkills(); toast(n+' added');
+    }}]);
+  setTimeout(()=>$('#nsk')?.focus(),120);
+}
+
 /* ═══════════ CONNECTED ACCOUNTS & KNOWLEDGE ═══════════ */
 const CONNECTORS = [
   {id:'drive', name:'Google Drive', icon:'hard-drive', color:'#0a84ff', desc:'Read and save files straight into your Drive folders.', kind:'google'},
@@ -1617,7 +1679,7 @@ function openBrowserKey(){
   modal('Cloud browser key', `
     <p class="mb-3">Paste your Browser Use key. It stays in this browser only.</p>
     <input id="bbk" value="${esc(S.bbKey||'')}" placeholder="bu_..." class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px]" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)">
-    <div class="text-[10.5px] text-[var(--muted)] mt-2">Used for real browser tasks. Without it, browser steps run as a local simulation.</div>`,
+    <div class="text-[10.5px] text-[var(--muted)] mt-2">Used for real browser sessions. Without it, the agent plans and produces files without opening a browser.</div>`,
     [{label:'Cancel',fn:closeModal},{label:'Save',cls:'btn-primary',fn:()=>{S.bbKey=$('#bbk').value.trim();S.conn=S.conn||{};S.conn.browser=!!S.bbKey;save();closeModal();renderConnectors();toast(S.bbKey?'Cloud browser connected':'Saved');}}]);
   setTimeout(()=>$('#bbk')?.focus(),120);
 }
@@ -1689,19 +1751,22 @@ function statusPill(st){
 }
 function renderDash(){
   const el=document.getElementById('dashWrap'); if(!el) return;
+  const st=store();
   const runs=(S.runs||[]);
   const a=aStatus();
-  const pending = runs.filter(r=>!r.done).length + (a.goal && a.status!=='completed' ? 1 : 0);
+  const openTasks = (a.goal && a.status!=='completed' ? 1 : 0);
   const cards = [
-    {k:'tasks',   t:'Tasks',        v:runs.length + (a.goal?1:0), s:pending+' open', c:'#0a84ff', i:'list-checks', go:'tasks'},
-    {k:'runs',    t:'Agent Runs',   v:runs.length,               s:'all time',      c:'#bf5af2', i:'bot', go:'agent'},
-    {k:'files',   t:'Files',        v:DEMO.files.length,         s:'2 new',         c:'#ff9f0a', i:'folder', go:'files'},
-    {k:'docs',    t:'Documents',    v:DEMO.docs.length,          s:'templates',     c:'#32ade6', i:'file-text', go:'documents'},
-    {k:'reports', t:'Reports',      v:DEMO.reports.length,       s:'1 due',         c:'#30d158', i:'bar-chart-3', go:'reports'},
-    {k:'social',  t:'Social Media', v:DEMO.social.length,        s:'7 platforms',   c:'#ff375f', i:'megaphone', go:'social'}
+    {t:'Tasks',        v:runs.length+openTasks, s:openTasks?openTasks+' in progress':'all clear', c:'#0a84ff', i:'list-checks', go:'tasks'},
+    {t:'Agent Runs',   v:runs.length,            s:runs.length? 'latest '+(runs[0]?new Date(runs[0].at).toLocaleDateString():'—'):'none yet', c:'#bf5af2', i:'bot', go:'agent'},
+    {t:'Files',        v:st.files.length,        s:st.files.length?'ready to download':'empty', c:'#ff9f0a', i:'folder', go:'files'},
+    {t:'Documents',    v:st.docs.length,         s:st.docs.length?'saved drafts':'empty', c:'#32ade6', i:'file-text', go:'documents'},
+    {t:'Reports',      v:st.reports.length,      s:st.reports.length?'generated':'empty', c:'#30d158', i:'bar-chart-3', go:'reports'},
+    {t:'Social Media', v:st.social.length,       s:st.social.length?'posts queued':'queue empty', c:'#ff375f', i:'megaphone', go:'social'}
   ];
   const hour=new Date().getHours();
   const hi = hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
+  const bars=weekBars(); const max=Math.max(1,...bars.map(b=>b.v));
+
   el.innerHTML = `
     <div class="flex items-end justify-between gap-3 mb-5 anim" style="flex-wrap:nowrap">
       <div class="min-w-0">
@@ -1711,7 +1776,7 @@ function renderDash(){
       <button class="btn-primary px-4 py-2.5 text-[12.5px] font-medium press shrink-0 whitespace-nowrap" onclick="go('agent')">New task</button>
     </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 mb-5">
+    <div class="grid grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-2.5 mb-5">
       ${cards.map((c,i)=>`
         <button class="dashcard lg card lift anim press text-left" style="padding:15px;animation-delay:${i*40}ms" onclick="go('${c.go}')">
           <div class="flex items-start justify-between mb-3">
@@ -1740,7 +1805,7 @@ function renderDash(){
             <button class="text-left px-3.5 py-3 rounded-xl press" style="background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="go('agent')">
               <div class="flex items-center gap-2 mb-1"><span class="w-6 h-6 rounded-lg grid place-items-center" style="background:rgba(191,90,242,.12)">${icon('bot','w-3.5 h-3.5','#bf5af2')}</span>
               <span class="text-[12.5px] font-semibold">Run a task</span></div>
-              <span class="text-[11px] text-[var(--muted)]">Preview, approve, then execute</span>
+              <span class="text-[11px] text-[var(--muted)]">Analyze, preview, approve, execute</span>
             </button>
           </div>
         </div>
@@ -1761,6 +1826,17 @@ function renderDash(){
 
       <div class="flex flex-col gap-2.5">
         <div class="lg card anim in" style="padding:15px">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-[13px] font-semibold">Activity · 7 days</div>
+            <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">${bars.reduce((x,y)=>x+y.v,0)}</span>
+          </div>
+          <div class="flex items-end gap-1.5" style="height:86px">
+            ${bars.map(b=>`<div class="flex-1 flex flex-col items-center gap-1 h-full">
+              <div class="grow w-full flex items-end"><div class="growbar w-full rounded-t-md" data-h="${Math.round(b.v/max*100)||2}" style="height:4%;background:linear-gradient(180deg,#5ac8fa,#0a84ff)"></div></div>
+              <span class="text-[9px] text-[var(--muted)]">${b.l[0]}</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="lg card anim in" style="padding:15px">
           <div class="text-[13px] font-semibold mb-2">Install the app</div>
           <div class="text-[11px] text-[var(--muted)] mb-2.5">Own icon, full screen, offline.</div>
           <button class="btn-glass w-full py-2 text-[12px] font-medium press" onclick="installApp()">Install</button>
@@ -1774,313 +1850,280 @@ function renderDash(){
     </div>`;
   refreshIcons();
   el.querySelectorAll('.anim').forEach(n=>n.classList.add('in'));
+  el.querySelectorAll('.growbar').forEach((b,i)=>setTimeout(()=>{ b.style.transition='height .7s cubic-bezier(.2,.8,.2,1)'; b.style.height=b.dataset.h+'%'; },60+i*50));
 }
 
 /* ═══════════ AGENT CONSOLE (6-stage flow) ═══════════ */
 const A_STAGES = [
-  {id:'task',    n:'Task',     d:'What you want done'},
-  {id:'analyze', n:'Analyze',  d:'Intent, plan and steps'},
-  {id:'preview', n:'Preview',  d:'Plan · output · files · actions'},
-  {id:'approve', n:'Approve',  d:'Your sign-off'},
-  {id:'execute', n:'Execute',  d:'Browser, tools and files'},
-  {id:'results', n:'Results',  d:'Final output and log'}
+  {id:'task',    n:'Task'},
+  {id:'analyze', n:'Analyze'},
+  {id:'preview', n:'Preview'},
+  {id:'execute', n:'Execute'},
+  {id:'results', n:'Results'}
 ];
 const AGENT_MODULES = ['Browser Use','Playwright','Gemini API'];
-const CHECKS = ['Plan reviewed','Output review','Error detection','Files listed','Actions confirmed'];
-const PV_TABS = [['plan','Plan'],['output','Output'],['files','Files'],['actions','Actions']];
+const A_SUGGEST = [
+  'Research 3 competitors and compare pricing',
+  'Draft a client proposal with pricing tiers',
+  'Build a 30-day social media plan',
+  'Summarise this week into a report'
+];
 
 function aStatus(){
-  const a = S.agent || {};
-  return {stage:0,status:'pending',goal:'',log:[],plan:null,output:'',files:[],actions:[],tab:'plan', ...a};
+  const a=S.agent||{};
+  return {stage:0,status:'pending',goal:'',plan:null,output:'',files:[],actions:[],activity:[], ...a};
 }
 function setAStatus(patch){ S.agent=Object.assign(aStatus(),patch); save(); }
-function statusPill(st){
+function aStateLabel(){
+  return {pending:'idle',analyzing:'analyzing',ready:'awaiting approval',running:'running',completed:'completed',failed:'failed'}[aStatus().status]||'idle';
+}
+function agentStatusPill(){
+  const st=aStatus().status;
   const c={pending:'#8a8a94',analyzing:'#0a84ff',ready:'#ff9f0a',running:'#0a84ff',completed:'#30d158',failed:'#ff375f'}[st]||'#8a8a94';
-  return `<span class="pill" style="background:${c}1f;color:${c}"><span class="w-1.5 h-1.5 rounded-full inline-block mr-1" style="background:${c}"></span>${st}</span>`;
+  return {c, label:aStateLabel()};
+}
+
+/* ── Agent = chat layout ── */
+function agentHero(){
+  const el=document.getElementById('aSuggest'); if(!el) return;
+  el.innerHTML = A_SUGGEST.map(t=>`<button class="chip lg press" onclick="agentFill(${JSON.stringify(t).replace(/"/g,'&quot;')})">${esc(t)}</button>`).join('');
+  refreshIcons();
+}
+function agentFill(t){ const i=document.getElementById('atask'); if(i){ i.value=t; i.focus(); } }
+
+function aMsg(who, html){
+  const el=document.createElement('div'); el.className='msg '+who;
+  el.innerHTML = who==='ai'
+    ? `<div class="avatar lg" style="background:linear-gradient(135deg,#bf5af2,#5e5ce6);display:grid;place-items:center"><i data-lucide="bot" class="w-4 h-4" style="color:#fff"></i></div><div class="bubble lg">${html}</div>`
+    : `<div class="bubble">${html}</div>`;
+  document.getElementById('athreadInner').appendChild(el);
+  const _h=document.getElementById('ahero'); if(_h){ _h.classList.add('hidden'); _h.style.display='none'; }
+  document.getElementById('athread').classList.remove('hidden');
+  refreshIcons();
+  const th=document.getElementById('athread'); th.scrollTop=1e9;
+  return el;
+}
+function aStepMsg(text, kind){
+  const map={info:'#0a84ff',ok:'#30d158',warn:'#ff9f0a',muted:'#9a9aa6'};
+  const c=map[kind||'info'];
+  return aMsg('ai', `<div style="display:flex;gap:8px;align-items:flex-start">
+      <span class="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style="background:${c}"></span>
+      <span style="font-size:13px">${text}</span></div>`);
+}
+
+/* ── Preview panel: live activity ── */
+function paintPreview(){
+  const box=document.getElementById('aPreview'); if(!box) return;
+  const a=aStatus();
+  const p=agentStatusPill();
+  const sp=document.getElementById('apvState');
+  if(sp){ sp.textContent=p.label; sp.style.background=p.c+'1f'; sp.style.color=p.c; }
+
+  const stLabel=(k,label,done,active)=>`<div class="flex items-center gap-2 py-1">
+    <span class="w-4 h-4 rounded-full grid place-items-center shrink-0" style="background:${done?'#30d158':active?'#0a84ff':'#e6e6ec'}">
+      <span style="width:5px;height:5px;border-radius:99px;background:${done||active?'#fff':'#c3c3cc'};display:block"></span></span>
+    <span class="text-[11.5px] ${done||active?'':'text-[var(--muted)]'}">${label}</span>
+    ${active?'<span class="live-dot ml-auto"></span>':done?'<span class="text-[10px] ml-auto" style="color:#30d158">done</span>':''}</div>`;
+
+  const stages = [
+    ['analysis','Thinking & analysis', a.stage>=1, a.status==='analyzing'&&a.stage<2],
+    ['plan','Planning', !!(a.plan), a.status==='analyzing'&&!!a.plan],
+    ['browser','Browser actions', (a.activity||[]).some(x=>/browser|page|source/i.test(x.t)) , a.status==='running'],
+    ['steps','Running steps', a.status==='running'||a.status==='completed', false],
+    ['files','Files generated', a.status==='completed', false],
+    ['result','Final result', a.status==='completed', false]
+  ];
+
+  box.innerHTML = `
+    <div class="mb-2">${stages.map(([k,l,d,act])=>stLabel(k,l,d,act)).join('')}</div>
+    <div class="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">Live activity</div>
+    <div id="aActivity" class="flex flex-col gap-1 mb-2"></div>
+    ${a.output?`<div class="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">${a.status==='completed'?'Result':'Output preview'}</div>
+      <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,.9);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)">${a.status==='completed'?a.output:'<div class="text-[11.5px] text-[var(--muted)]">Full output unlocks after approval.</div>'}</div>`:''}
+    ${a.files&&a.files.length?`<div class="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mt-2.5 mb-1.5">Files</div>
+      ${a.files.map(f=>`<div class="flex items-center gap-1.5 py-0.5">${icon('file','w-3 h-3','#0a84ff')}<span class="text-[11px] truncate">${esc(f)}</span></div>`).join('')}`:''}`;
+  (a.activity||[]).forEach(x=>actLine(x.t,x.k,true));
+  document.getElementById('aApproveWrap').classList.toggle('hidden', a.status!=='ready');
+  refreshIcons();
+}
+function actLine(text, kind, replay){
+  const box=document.getElementById('aActivity'); if(!box) return;
+  const map={info:'#0a84ff',ok:'#30d158',warn:'#ff9f0a',muted:'#9a9aa6'};
+  const c=map[kind||'info'];
+  const row=document.createElement('div');
+  row.className='flex items-start gap-1.5';
+  if(!replay){ row.style.animation='pop .28s var(--ease)'; }
+  row.innerHTML=`<span style="width:4px;height:4px;border-radius:99px;background:${c};margin-top:6px;flex:none"></span><span style="font-size:11px;line-height:1.45;color:#4a4a55">${text}</span>`;
+  box.appendChild(row); box.scrollTop=1e9;
+}
+function act(text, kind){
+  const a=aStatus(); a.activity=(a.activity||[]).concat([{t:text,k:kind}]); setAStatus(a); actLine(text,kind);
+}
+function agentProgress(i, status, label){
+  setAStatus({stage:i,status});
+  const p=agentStatusPill(); const sp=document.getElementById('apvState');
+  if(sp){ sp.textContent=label||aStateLabel(); sp.style.background=p.c+'1f'; sp.style.color=p.c; }
 }
 
 function renderAgent(){
-  const el=document.getElementById('agentWrap'); if(!el) return;
-  const a=aStatus();
-  const goalEsc=esc(a.goal||'');
-  const ready=a.status==='ready';
-  el.innerHTML = `
-    <div class="flex items-end justify-between gap-3 mb-4 anim" style="flex-wrap:nowrap">
-      <div>
-        <h1 class="text-[24px] sm:text-[26px] font-semibold tracking-tight leading-tight">Agent</h1>
-        <p class="text-[12.5px] text-[var(--muted)] mt-1">Task → Analyze → Preview → Approve → Execute → Results.</p>
-      </div>
-      ${statusPill(a.status)}
-    </div>
-
-    <div class="lg card anim in mb-2.5" style="padding:14px">
-      <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">Task</div>
-      <textarea id="taskGoal" rows="2" placeholder="e.g. Research 3 competitors, compare pricing and build a one-page brief" class="w-full px-3 py-2.5 rounded-xl text-[16px] sm:text-[13px] leading-snug bg-white/95 outline-none" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.09);resize:none">${goalEsc}</textarea>
-      <div class="flex items-center justify-between gap-2 mt-2.5 flex-wrap">
-        <div class="flex items-center gap-1 flex-wrap">
-          ${AGENT_MODULES.map(m=>`<span class="pill" style="background:rgba(10,132,255,.09);color:#0a6bd0">${m}</span>`).join('')}
-          ${S.bbKey?`<span class="pill" style="background:rgba(48,209,88,.12);color:#1d9b41">BU key</span>`:''}
-        </div>
-        <div class="flex items-center gap-1.5">
-          ${a.goal?`<button class="btn-glass px-3 py-2 text-[12px] font-medium press" onclick="agentReset()">Clear</button>`:''}
-          <button class="btn-primary px-4 py-2 text-[12.5px] font-medium press inline-flex items-center gap-1.5 shrink-0" onclick="agentAnalyze()">
-            ${icon('scan-search','w-3.5 h-3.5','#fff')} Analyze
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-1 mb-2.5 overflow-x-auto" style="scrollbar-width:none">
-      ${A_STAGES.map((st,i)=>{
-        const done=i<a.stage || a.status==='completed', cur=i===a.stage && a.status!=='completed' && a.status!=='ready';
-        const c=done?'#30d158':cur?'#0a84ff':'#c3c3cc';
-        return `<div class="flex items-center gap-1 shrink-0">
-          <span class="pill" style="background:${c}1a;color:${done||cur?c:'#9a9aa6'}">${done?'✓ ':''}${st.n}</span>
-          ${i<A_STAGES.length-1?`<span style="color:#d6d6de;font-size:10px">→</span>`:''}
-        </div>`;
-      }).join('')}
-    </div>
-
-    <div class="grid lg:grid-cols-2 gap-2.5">
-      <div class="lg card anim in" style="padding:14px">
-        <div class="flex items-center justify-between mb-2">
-          <div class="text-[12.5px] font-semibold">Agent log</div>
-          <span class="text-[10.5px] text-[var(--muted)]" id="aConsoleState">${esc(a.status)}</span>
-        </div>
-        <div id="aConsole" class="flex flex-col gap-1.5" style="max-height:340px;overflow:auto">
-          <div class="text-[11.5px] text-[var(--muted)]">Describe a task above, then press Analyze.</div>
-        </div>
-      </div>
-
-      <div class="lg card anim in" style="padding:14px">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-1.5"><span class="live-dot"></span>
-            <span class="text-[12.5px] font-semibold">Live preview</span></div>
-          <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">before execution</span>
-        </div>
-        <div class="seg lg mb-2" style="background:rgba(0,0,0,.04)">
-          ${PV_TABS.map(([k,l])=>`<button class="pvtab" data-tab="${k}" onclick="pvTab('${k}')" style="${a.tab===k?'background:#fff;color:#0b0b0f;box-shadow:0 1px 3px rgba(0,0,0,.1)':'color:#6b6b76'}">${l}${k==='files'&&a.files.length?' ('+a.files.length+')':''}${k==='actions'?' ('+(a.actions.length||0)+')':''}</button>`).join('')}
-        </div>
-        <div id="aPreview" class="scrollarea pr-0.5" style="max-height:300px;min-height:150px"></div>
-        ${ready?`<button class="btn-primary w-full mt-2.5 py-2 text-[12.5px] font-medium press inline-flex items-center justify-center gap-1.5" onclick="agentApprove()">
-            ${icon('badge-check','w-3.5 h-3.5','#fff')} Approve & run
-          </button>`:''}
-      </div>
-    </div>`;
-  refreshIcons();
-  el.querySelectorAll('.anim').forEach(n=>n.classList.add('in'));
-  paintAgentLog();
-  paintPreview();
+  agentHero(); paintPreview();
+  const th=document.getElementById('athreadInner');
+  const has=th && th.children.length>0;
+  const h=document.getElementById('ahero'); if(h) h.style.display = has?'none':'';
+  const t=document.getElementById('athread'); if(t) t.classList.toggle('hidden', !has);
 }
-
-function aLine(text, kind){
-  const box=document.getElementById('aConsole'); if(!box) return;
-  const map={info:'#0a84ff', ok:'#30d158', warn:'#ff9f0a', err:'#ff375f', muted:'#9a9aa6'};
-  const c=map[kind||'info'];
-  const row=document.createElement('div');
-  row.className='flex items-start gap-2';
-  row.innerHTML=`<span class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style="background:${c}"></span><span class="text-[11.5px] leading-snug" style="color:#3a3a44">${text}</span>`;
-  box.appendChild(row); box.scrollTop=1e9;
-}
-function paintAgentLog(){
-  const box=document.getElementById('aConsole'); if(!box) return;
-  const a=aStatus();
-  if(!a.log.length){ box.innerHTML='<div class="text-[11.5px] text-[var(--muted)]">Describe a task above, then press Analyze.</div>'; return; }
-  box.innerHTML='';
-  a.log.forEach(l=>aLine(l.t,l.k));
-}
-function aLog(text, kind){ const a=aStatus(); a.log=[]; a.log.push({t:text,k:kind}); setAStatus(a); aLine(text,kind); }
-
-function paintPreview(){
-  const el=document.getElementById('aPreview'); if(!el) return;
-  const a=aStatus();
-  if(a.tab==='plan'){
-    if(!a.plan){ el.innerHTML='<div class="text-[11.5px] text-[var(--muted)]">The plan appears here after analysis — nothing runs until you approve.</div>'; return; }
-    el.innerHTML = a.plan.map((st,i)=>`<div class="flex items-start gap-2 py-1.5">
-      <span class="w-5 h-5 rounded-full grid place-items-center shrink-0 text-[10px] font-semibold" style="background:rgba(10,132,255,.12);color:#0a6bd0">${i+1}</span>
-      <div class="min-w-0"><div class="text-[12px] font-medium">${esc(st[0])}</div>
-      <div class="text-[10.5px] text-[var(--muted)]">${esc(st[1])}</div></div></div>`).join('');
-    return;
-  }
-  if(a.tab==='output'){
-    el.innerHTML = a.output ? a.output : '<div class="text-[11.5px] text-[var(--muted)]">The draft output appears here before execution. You can read it and approve only when it is right.</div>';
-    return;
-  }
-  if(a.tab==='files'){
-    el.innerHTML = a.files.length ? a.files.map(f=>`<div class="flex items-center gap-2 py-1.5">
-      ${icon('file','w-3.5 h-3.5','#0a84ff')}<span class="text-[12px] flex-1 truncate">${esc(f)}</span>
-      <span class="pill" style="background:rgba(0,0,0,.05);color:#8a8a94">on approve</span></div>`).join('')
-      : '<div class="text-[11.5px] text-[var(--muted)]">No files yet. Files the agent will create are listed here.</div>';
-    return;
-  }
-  el.innerHTML = a.actions.length ? a.actions.map(x=>`<div class="flex items-center gap-2 py-1.5">
-      ${icon('check','w-3.5 h-3.5','#30d158')}<span class="text-[12px] flex-1">${esc(x)}</span></div>`).join('')
-    : '<div class="text-[11.5px] text-[var(--muted)]">Actions are listed after analysis.</div>';
-  refreshIcons();
-}
-function pvTab(k){ setAStatus({tab:k}); document.querySelectorAll('#agentWrap .pvtab').forEach(b=>{
-  const on=b.dataset.tab===k;
-  b.style.background=on?'#fff':'transparent'; b.style.color=on?'#0b0b0f':'#6b6b76';
-  b.style.boxShadow=on?'0 1px 3px rgba(0,0,0,.1)':'none';
-}); paintPreview(); }
 
 function agentReset(){
-  S.agent={stage:0,status:'pending',goal:'',log:[],plan:null,output:'',files:[],actions:[],tab:'plan'};
-  save(); renderAgent();
+  S.agent={stage:0,status:'pending',goal:'',plan:null,output:'',files:[],actions:[],activity:[]};
+  save();
+  document.getElementById('athreadInner').innerHTML='';
+  document.getElementById('athread').classList.add('hidden');
+  const _h=document.getElementById('ahero'); if(_h){ _h.classList.remove('hidden'); _h.style.display=''; }
+  renderAgent();
 }
 
-/* Step 2: analyze only — nothing executes */
-async function agentAnalyze(){
+let agentBusy=false;
+async function agentSend(){
   if(agentBusy) return;
-  const goal=(document.getElementById('taskGoal')?.value||'').trim();
+  const inp=document.getElementById('atask');
+  const goal=(inp?.value||'').trim();
   if(!goal){ toast('Describe the task first'); return; }
+  inp.value='';
   agentBusy=true;
+
   const type=taskType(goal);
   const plan=(STEPS[type]||STEPS.default);
-  const files = type==='proposal' ? ['Client_Proposal.pdf','Pricing_Sheet.pdf']
-              : type==='data' ? ['Summary_Table.csv','Report.pdf']
-              : type==='research' ? ['Comparison_Brief.pdf']
-              : ['Deliverable.md'];
-  const actions = ['Open source pages in browser','Extract and verify facts','Draft the deliverable','Run self-check and validation','Save files to Files'];
+  const slug=(goal.toLowerCase().match(/[a-z0-9]+/g)||['task']).slice(0,4).map(w=>w[0].toUpperCase()+w.slice(1)).join('_');
+  const files = type==='proposal' ? [slug+'_Proposal.md','Pricing_Sheet.csv']
+              : type==='data' ? [slug+'_Summary.csv','Report.md']
+              : type==='research' ? [slug+'_Brief.md'] : [slug+'.md'];
 
-  S.agent={stage:1,status:'analyzing',goal,log:[],plan,output:'',files,actions,tab:'plan'}; save();
-  document.querySelectorAll('#agentWrap .anim').forEach(n=>n.classList.add('in'));
-  renderAgent();
-  aLog('Task received: '+esc(goal.slice(0,90)),'info');
-  await wait(320);
-  aLog('Intent: <b>'+type+'</b> · skills: '+(SKILLS.filter((s,i)=>S.skills[i]).slice(0,4).map(s=>s.name).join(', ')||'core'),'ok');
-  aLog('Runtime: '+(S.mode==='local'?'Local engine':'Gemini · '+(hasCloudKey()?'live':'simulation'))+(S.bbKey?' + Browser Use':' + browser sim'),'info');
-  aLog('Plan built · '+plan.length+' steps · preview ready','ok');
+  S.agent={stage:0,status:'analyzing',goal,plan:null,output:'',files:[],actions:[],activity:[]}; save();
+  aMsg('me', esc(goal));
+  const think=aMsg('ai','<span class="dots"><span></span><span></span><span></span></span>');
+  const bubble=think.querySelector('.bubble');
 
-  // draft the output preview before approval
+  await wait(420);
+  bubble.innerHTML = `<div style="display:flex;gap:8px;align-items:flex-start"><span class="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style="background:#0a84ff"></span><span style="font-size:13px">Thinking — reading the task and matching skills…</span></div>`;
+  agentProgress(1,'analyzing','analyzing');
+  act('Reading task: '+esc(goal.slice(0,60)),'info');
+  await wait(600);
+
+  bubble.innerHTML = `<div style="display:flex;gap:8px;align-items:flex-start"><span class="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style="background:#0a84ff"></span><span style="font-size:13px">Planning — ${plan.length} steps, ${AGENT_MODULES.join(' → ')}…</span></div>`;
+  act('Plan built · '+plan.length+' steps','ok');
+  S.agent=Object.assign(aStatus(),{plan}); save();
+  paintPreview();
+  await wait(700);
+
   let out='';
   if(S.mode!=='local' && hasCloudKey()){
-    try{ out = fmt(await callModel(PRESETS.agent,'Preview only — do not claim work is finished.\nTask: '+goal+'\nReturn a concise draft deliverable.',900)); }
-    catch(e){ out='<div style="color:#ff375f;font-size:12px">'+esc(String(e.message).slice(0,140))+'</div>'; }
+    try{ out = fmt(await callModel(PRESETS.agent,'Preview only — nothing has been executed yet.\nTask: '+goal+'\nReturn a concise plan of the finished deliverable.',900)); }
+    catch(e){ out = `<div style="color:#ff375f;font-size:12px">${esc(String(e.message).slice(0,140))}</div>`; }
   } else { out = fmt(structuredAnswer(goal,false)); }
 
-  S.agent=Object.assign(aStatus(),{stage:2,status:'ready',output:out}); save();
-  renderAgent();
-  aLog('Preview ready — waiting for your approval','warn');
-  const tp0=document.getElementById('taskPill'); if(tp0) tp0.textContent=String((S.runs||[]).length+1);
+  S.agent=Object.assign(aStatus(),{stage:2,status:'ready',output:out,files}); save();
+  agentProgress(2,'ready','awaiting approval');
+  act('Preview ready — waiting for approval','warn');
+
+  bubble.innerHTML = `<div style="font-size:13px;margin-bottom:7px">Here is the plan. Review it in the preview panel, then approve to execute.</div>
+    ${plan.map((st,i)=>`<div style="display:flex;gap:7px;margin:3px 0"><span style="color:#0a84ff;font-weight:600;flex:none">${i+1}</span><span>${esc(st[0])}</span></div>`).join('')}
+    <div style="margin-top:8px;font-size:12px;color:#8a8a94">${files.length} file${files.length>1?'s':''} will be created · press Approve &amp; run in the preview panel.</div>`;
+  paintPreview();
+  refreshIcons();
   agentBusy=false;
 }
 
-/* Step 4: approve, then execute */
 async function agentApprove(){
   if(agentBusy) return;
   const a=aStatus();
-  if(!a.plan){ toast('Analyze the task first'); return; }
+  if(!a.plan){ toast('Send a task first'); return; }
   agentBusy=true;
-  setAStatus({stage:4,status:'running'}); renderAgent();
-  aLog('Approved by you — executing','info');
+  setAStatus({status:'running',stage:3}); save();
+  agentProgress(3,'running','running');
+  const think=aMsg('ai','<span class="dots"><span></span><span></span><span></span></span>');
+  const bubble=think.querySelector('.bubble');
+  act('Approved — executing','info');
+
   for(let i=0;i<a.plan.length;i++){
-    aLog('▶ '+esc(a.plan[i][0]),'info');
-    await wait(300+Math.random()*220);
-    aLog('✓ done','ok');
+    bubble.innerHTML=`<div style="display:flex;gap:8px;align-items:flex-start"><span class="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style="background:#0a84ff"></span><span style="font-size:13px">Running step ${i+1}/${a.plan.length} — ${esc(a.plan[i][0])}</span></div>`;
+    act('▶ '+esc(a.plan[i][0]),'info');
+    await wait(330+Math.random()*200);
+    act('✓ '+esc(a.plan[i][0]),'ok');
   }
-  if(S.bbKey) aLog('Browser Use session attached','ok');
-  aLog('Files written: '+a.files.join(', '),'ok');
+  if(S.bbKey) act('Browser Use session attached','ok');
+  act('Files written: '+a.files.join(', '),'ok');
   await wait(300);
-  setAStatus({stage:5,status:'completed'});
-  const prev=a.output;
+
+  const plain=(a.output||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+  a.files.forEach(fn=>addFile(fn, plain, 'agent'));
+  const type=taskType(a.goal);
+  if(type==='proposal') addDoc(a.goal.slice(0,60), plain);
+  else if(type==='data') addReport(a.goal.slice(0,60), plain, a.plan.length);
+  else addReport(a.goal.slice(0,60), plain, a.plan.length);
+  S.agent=Object.assign(aStatus(),{stage:4,status:'completed'}); save();
+  touchActivity();
   S.runs.unshift({task:a.goal, ms:3600, at:new Date().toISOString(), engine:'Agent · approved'});
   S.runs=S.runs.slice(0,40); save();
   const rp=document.getElementById('runPill'); if(rp) rp.textContent=S.runs.length;
   const tp=document.getElementById('taskPill'); if(tp) tp.textContent=S.runs.length;
-  renderAgent();
-  aLog('✓ Delivered · result below and logged to Tasks','ok');
-  const el=document.getElementById('aPreview');
-  if(el){ el.innerHTML = `<div class="mini-h" style="color:#1d9b41">Result · ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>${prev}`; refreshIcons(); }
+
+  agentProgress(4,'completed','completed');
+  bubble.innerHTML = `${a.output}<div style="margin-top:9px;font-size:11.5px;color:#30d158">Delivered · logged to Tasks</div>`;
+  paintPreview(); refreshIcons();
+  const th=document.getElementById('athread'); if(th) th.scrollTop=1e9;
   toast('Task complete');
   agentBusy=false;
 }
 
-function dockRun(){
-  const el=document.getElementById('dockPrompt'); const t=(el?.value||'').trim();
-  go('agent');
-  if(!t) return;
-  const ta=document.getElementById('taskGoal'); if(ta) ta.value=t;
-  setTimeout(()=>agentAnalyze(),150);
-}
-let agentBusy=false;
 
 /* ═══════════ SECTION DATA & RENDERERS ═══════════ */
-const DEMO = {
-  files:[
-    {n:'Client_Proposal_Acme.pdf', s:'248 KB', t:'PDF', c:'#ff375f'},
-    {n:'Visa_Checklist_UAE.docx', s:'92 KB', t:'DOC', c:'#0a84ff'},
-    {n:'Recruitment_Funnel.xlsx', s:'64 KB', t:'XLS', c:'#30d158'},
-    {n:'Social_Plan_30d.pptx', s:'1.2 MB', t:'PPT', c:'#ff9f0a'},
-    {n:'Brand_Voice.md', s:'8 KB', t:'TXT', c:'#8a8a94'}
-  ],
-  docs:[
-    {n:'Visa application cover letter', d:'One page, consulate-ready', c:'#0a84ff', i:'file-signature'},
-    {n:'Statement of purpose (study)', d:'900 words, personalised', c:'#5e5ce6', i:'file-text'},
-    {n:'Employment offer letter', d:'With salary and start date', c:'#30d158', i:'file-badge'},
-    {n:'Client proposal + pricing', d:'Scope, timeline, 3 tiers', c:'#ff9f0a', i:'file-spreadsheet'},
-    {n:'SOP — onboarding process', d:'Internal standard operating procedure', c:'#bf5af2', i:'list-ordered'},
-    {n:'NDA / engagement terms', d:'Short mutual NDA', c:'#8a8a94', i:'shield'}
-  ],
-  reports:[
-    {n:'Weekly operations report', d:'Mon–Sun summary, auto-built', d2:'3 min ago'},
-    {n:'Recruitment pipeline report', d:'Funnel by stage and source', d2:'Yesterday'},
-    {n:'Visa case status report', d:'All open applications', d2:'2 days ago'},
-    {n:'Campaign performance report', d:'Spend, leads, cost per lead', d2:'4 days ago'}
-  ],
-  social:[
-    {p:'Instagram', i:'instagram', c:'#e1306c', f:'4,210', e:'3.8%'},
-    {p:'LinkedIn', i:'linkedin', c:'#0a66c2', f:'1,940', e:'5.1%'},
-    {p:'Facebook', i:'facebook', c:'#1877f2', f:'6,830', e:'2.2%'},
-    {p:'X', i:'twitter', c:'#111114', f:'1,120', e:'1.4%'},
-    {p:'TikTok', i:'music-2', c:'#111114', f:'9,450', e:'7.6%'},
-    {p:'YouTube', i:'youtube', c:'#ff0000', f:'820', e:'2.9%'},
-    {p:'Threads', i:'at-sign', c:'#111114', f:'640', e:'3.1%'},
-    {p:'Pinterest', i:'pin', c:'#e60023', f:'510', e:'1.8%'}
-  ],
-  crm:[
-    {n:'Amina Yusuf', s:'Visa — UAE work', st:'Proposal sent', v:'$1,450', c:'#ff9f0a'},
-    {n:'Daniel Okafor', s:'Recruitment — 2 roles', st:'Interviewing', v:'$3,200', c:'#0a84ff'},
-    {n:'Priya Raghavan', s:'Study visa — Canada', st:'Docs pending', v:'$980', c:'#bf5af2'},
-    {n:'Marco Bianchi', s:'Marketing retainer', st:'Won', v:'$2,400/mo', c:'#30d158'}
-  ],
-  workflows:[
-    {n:'New lead → qualify → book call', st:'Active', runs:'128', c:'#0a84ff', i:'git-branch'},
-    {n:'Visa case → documents → submission', st:'Active', runs:'64', c:'#30d158', i:'stamp'},
-    {n:'Job post → screen → interview pack', st:'Active', runs:'41', c:'#bf5af2', i:'users'},
-    {n:'Weekly report → email → archive', st:'Paused', runs:'12', c:'#ff9f0a', i:'mail'},
-    {n:'Content calendar → publish → analytics', st:'Draft', runs:'0', c:'#8a8a94', i:'calendar'}
-  ],
-  tasks:[
-    {t:'Prepare UAE work visa document pack', d:'Today · 14:00', st:'in progress', c:'#0a84ff'},
-    {t:'Send follow-up to 6 cold leads', d:'Today · 17:00', st:'queued', c:'#ff9f0a'},
-    {t:'Publish 4 Instagram posts this week', d:'Fri · 10:00', st:'queued', c:'#bf5af2'},
-    {t:'Review customer support replies', d:'done', st:'done', c:'#30d158'}
-  ],
-  research:[
-    {q:'Canada study permit 2026 processing times', s:'IRCC official · updated this week'},
-    {q:'UAE Golden Visa eligibility for investors', s:'ICP official · 2026 rules'},
-    {q:'UK Skilled Worker salary thresholds', s:'GOV.UK official · April 2026'},
-    {q:'Top visa consultancy markets to expand', s:'3 sources compared · Q3 2026'}
-  ],
-  studio:[
-    {t:'Instagram carousel — 5 visa myths', tag:'Social', c:'#bf5af2', i:'images'},
-    {t:'Reel script — 30s study abroad hook', tag:'Video', c:'#ff375f', i:'video'},
-    {t:'LinkedIn post — hiring checklist', tag:'Social', c:'#0a66c2', i:'briefcase'},
-    {t:'Email sequence — 3 follow-ups', tag:'Email', c:'#ff9f0a', i:'mail'},
-    {t:'Blog draft — how to choose a consultant', tag:'Blog', c:'#30d158', i:'pen-line'},
-    {t:'Ad copy — 6 headlines A/B set', tag:'Ads', c:'#0a84ff', i:'megaphone'}
-  ],
-  business:[
-    {n:'Offers & packages', d:'3 pricing tiers ready to share', i:'package', c:'#0a84ff'},
-    {n:'Team & roles', d:'4 people, 2 open seats', i:'users', c:'#30d158'},
-    {n:'Revenue this month', d:'$18,420 +12% vs last', i:'trending-up', c:'#bf5af2'},
-    {n:'Compliance tracker', d:'2 items need review', i:'shield-alert', c:'#ff9f0a'}
-  ]
-};
-const ANIM_BARS = [
-  {l:'Mon',v:42},{l:'Tue',v:58},{l:'Wed',v:47},{l:'Thu',v:71},{l:'Fri',v:64},{l:'Sat',v:33},{l:'Sun',v:26}
-];
+/* ═══════════ REAL WORKSPACE STORE ═══════════ */
+function store(){ S.store = S.store || {files:[], docs:[], reports:[], social:[], activity:{}}; return S.store; }
+function stamp(){ return new Date().toISOString(); }
+function fmtSize(n){ return n<1024? n+' B' : n<1048576? (n/1024).toFixed(0)+' KB' : (n/1048576).toFixed(1)+' MB'; }
+function extColor(name){
+  const e=(name.split('.').pop()||'').toLowerCase();
+  return ({pdf:'#ff375f',doc:'#0a84ff',docx:'#0a84ff',csv:'#30d158',xlsx:'#30d158',md:'#8a8a94',txt:'#8a8a94',png:'#bf5af2',jpg:'#bf5af2',json:'#ff9f0a'})[e]||'#8a8a94';
+}
+function addFile(name, content, kind){
+  const st=store();
+  const bytes=new Blob([content||'']).size;
+  st.files.unshift({id:'f'+Date.now()+Math.random().toString(36).slice(2,6), n:name, t:(name.split('.').pop()||'txt').toUpperCase(),
+    s:fmtSize(bytes), c:extColor(name), at:stamp(), kind:kind||'agent', content:content||''});
+  st.files=st.files.slice(0,60); save();
+  return st.files[0];
+}
+function addDoc(title, content){
+  const st=store();
+  st.docs.unshift({id:'d'+Date.now(), n:title, d:(content||'').replace(/[#*_>`]/g,'').slice(0,70)||'Empty document', body:content||'', at:stamp()});
+  st.docs=st.docs.slice(0,40); save();
+}
+function addReport(title, content, rows){
+  const st=store();
+  st.reports.unshift({id:'r'+Date.now(), n:title, d:(content||'').replace(/[#*_>`]/g,'').slice(0,90)||'Generated report', body:content||'', rows:rows||0, at:stamp()});
+  st.reports=st.reports.slice(0,30); save();
+}
+function addSocial(platform, text){
+  const st=store();
+  st.social.unshift({id:'p'+Date.now(), p:platform||'Instagram', text:(text||'').slice(0,400), at:stamp()});
+  st.social=st.social.slice(0,60); save();
+}
+function touchActivity(){ const st=store(); const k=new Date().toISOString().slice(0,10); st.activity[k]=(st.activity[k]||0)+1; save(); }
+function weekBars(){
+  const st=store(); const out=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const k=d.toISOString().slice(0,10);
+    out.push({l:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()], v:st.activity[k]||0});
+  }
+  return out;
+}
+function downloadText(name, text){
+  const blob=new Blob([text||''],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
 
 function rBrowser(){
   return sHead('🌐 Cloud Browser','A real Chrome session your agent drives — screenshots and steps appear live.',
@@ -2100,53 +2143,114 @@ function rBrowser(){
     `<div class="grid sm:grid-cols-3 gap-2 mt-2" id="brCards"></div>`;
 }
 function rFiles(){
-  return sHead('📂 Files','Everything your agent creates lands here — downloadable and organised.',
-    `<button class="btn-glass px-3 py-1.5 text-[12px] font-medium press" onclick="toast('Upload coming with your key')">${icon('upload','w-3.5 h-3.5')} Upload</button>`) +
-    `<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">` +
-    DEMO.files.map(f=>sBox(`<div class="flex items-center gap-3">
+  const st=store();
+  return sHead('Files', st.files.length? st.files.length+' files' : 'Nothing here yet',
+    `<label class="btn-glass px-3 py-1.5 text-[12px] font-medium press cursor-pointer">${icon('upload','w-3.5 h-3.5')} Upload
+      <input type="file" class="hidden" onchange="uploadFile(this)"></label>`) +
+    (st.files.length ? `<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">` + st.files.map(f=>sBox(`<div class="flex items-center gap-3">
         <div class="iconbox" style="background:${f.c}1a">${icon('file','w-4 h-4',f.c)}</div>
-        <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium truncate">${f.n}</div>
-        <div class="text-[10.5px] text-[var(--muted)]">${f.t} · ${f.s}</div></div>
-        ${icon('download','w-4 h-4','#9a9aa6')}</div>`)).join('') +
-    `</div>`;
+        <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium truncate">${esc(f.n)}</div>
+        <div class="text-[10.5px] text-[var(--muted)]">${f.t} · ${f.s} · ${new Date(f.at).toLocaleDateString()}</div></div>
+        <button class="shrink-0" onclick="openFile('${f.id}')" title="Download">${icon('download','w-4 h-4','#9a9aa6')}</button>
+      </div>`)).join('') + `</div>`
+      : emptyState('folder','No files yet','Files the agent creates — and anything you upload — appear here.','go(\'agent\')','Run a task'));
 }
+function emptyState(ico,title,sub,act,label){
+  return sBox(`<div class="text-center py-8">${icon(ico,'w-7 h-7','#c3c3cc')}
+    <div class="text-[13px] font-semibold mt-2.5">${title}</div>
+    <div class="text-[11.5px] text-[var(--muted)] mt-1 max-w-[260px] mx-auto">${sub}</div>
+    ${act?`<button class="btn-glass px-3.5 py-1.5 text-[11.5px] font-medium press mt-3" onclick="${act}">${label}</button>`:''}</div>`);
+}
+function uploadFile(inp){
+  const f=inp.files&&inp.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ addFile(f.name, String(r.result||''),'upload'); renderSection('files'); toast(f.name+' uploaded'); };
+  r.readAsText(f);
+}
+function openFile(id){
+  const f=store().files.find(x=>x.id===id); if(!f) return;
+  downloadText(f.n, f.content||'');
+}
+
 function rDocs(){
-  return sHead('📄 Documents','Draft, refine and export consulate-ready documents with your agent.',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="askAgent('Draft a visa application cover letter for a UAE work visa')">${icon('sparkles','w-3.5 h-3.5')} Draft</button>`) +
-    `<div class="grid sm:grid-cols-2 gap-2">` + DEMO.docs.map(d=>sBox(`<div class="flex items-start gap-3">
-        <div class="iconbox" style="background:${d.c}1a">${icon(d.i,'w-4 h-4',d.c)}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-semibold">${d.n}</div>
-        <div class="text-[11px] text-[var(--muted)] mt-0.5">${d.d}</div></div>
-        <button class="text-[11px] font-medium shrink-0" style="color:#0a84ff" onclick="askAgent('${d.n}')">Open</button>
-      </div>`)).join('') + `</div>`;
+  const st=store();
+  return sHead('Documents', st.docs.length? st.docs.length+' documents' : 'Nothing here yet',
+    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="newDoc()">${icon('sparkles','w-3.5 h-3.5')} New document</button>`) +
+    (st.docs.length ? `<div class="grid sm:grid-cols-2 gap-2">` + st.docs.map(d=>sBox(`<div class="flex items-start gap-3">
+        <div class="iconbox" style="background:rgba(50,173,230,.12)">${icon('file-text','w-4 h-4','#32ade6')}</div>
+        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-semibold truncate">${esc(d.n)}</div>
+        <div class="text-[11px] text-[var(--muted)] mt-0.5 line-clamp-2">${esc(d.d)}</div>
+        <div class="text-[10px] text-[var(--muted)] mt-1">${new Date(d.at).toLocaleString()}</div></div>
+        <button class="text-[11px] font-medium shrink-0" style="color:#0a84ff" onclick="openDoc('${d.id}')">Open</button>
+      </div>`)).join('') + `</div>`
+      : emptyState('file-text','No documents yet','Ask the agent for a proposal, SOP or letter — it is saved here.','newDoc()','Create one'));
 }
+function openDoc(id){
+  const d=store().docs.find(x=>x.id===id); if(!d) return;
+  modal(d.n, `<div class="text-[12.5px] whitespace-pre-wrap max-h-[45vh] overflow-auto">${esc(d.body||'')}</div>`,
+    [{label:'Copy',fn:()=>{navigator.clipboard?.writeText(d.body||'');toast('Copied')}},
+     {label:'Download',cls:'btn-primary',fn:()=>downloadText(d.n+'.txt',d.body||'')}]);
+}
+function newDoc(){
+  modal('New document','<textarea id="ndoc" rows="6" placeholder="Ask for what you need, e.g. Proposal for visa processing services with pricing" class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px] scrollarea" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)"></textarea>',
+    [{label:'Cancel',fn:closeModal},{label:'Create',cls:'btn-primary',fn:()=>{
+      const t=($('#ndoc')?.value||'').trim(); if(!t){ toast('Describe the document'); return; }
+      closeModal(); go('agent'); const i=$('#atask'); if(i) i.value='Create a document: '+t;
+      setTimeout(()=>agentSend(),200);
+    }}]);
+}
+
 function rReports(){
-  return sHead('📊 Reports','Scheduled and on-demand reports, written in plain language.',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="askAgent('Build this week operations report')">${icon('file-bar-chart','w-3.5 h-3.5')} Build</button>`) +
-    `<div class="grid sm:grid-cols-2 gap-2">` + DEMO.reports.map(r=>sBox(`<div class="flex items-center gap-3">
-        <div class="iconbox" style="background:rgba(10,132,255,.1)">${icon('bar-chart-3','w-4 h-4','#0a84ff')}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-medium">${r.n}</div>
-        <div class="text-[10.5px] text-[var(--muted)]">${r.d} · ${r.d2}</div></div>
-        ${icon('chevron-right','w-4 h-4','#c3c3cc')}</div>`)).join('') + `</div>`;
+  const st=store();
+  return sHead('Reports', st.reports.length? st.reports.length+' reports' : 'Nothing here yet',
+    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="newReport()">${icon('bar-chart-3','w-3.5 h-3.5')} New report</button>`) +
+    (st.reports.length ? `<div class="grid sm:grid-cols-2 gap-2">` + st.reports.map(r=>sBox(`<div class="flex items-center gap-3">
+        <div class="iconbox" style="background:rgba(48,209,88,.12)">${icon('bar-chart-3','w-4 h-4','#30d158')}</div>
+        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-medium truncate">${esc(r.n)}</div>
+        <div class="text-[10.5px] text-[var(--muted)] truncate">${esc(r.d)}</div>
+        <div class="text-[10px] text-[var(--muted)] mt-0.5">${new Date(r.at).toLocaleString()}</div></div>
+        <button class="shrink-0" onclick="openReport('${r.id}')">${icon('chevron-right','w-4 h-4','#c3c3cc')}</button>
+      </div>`)).join('') + `</div>`
+      : emptyState('bar-chart-3','No reports yet','Ask the agent for a weekly summary and it is saved here.','newReport()','Build one'));
 }
+function openReport(id){
+  const r=store().reports.find(x=>x.id===id); if(!r) return;
+  modal(r.n, `<div class="text-[12.5px] whitespace-pre-wrap max-h-[45vh] overflow-auto">${esc(r.body||'')}</div>`,
+    [{label:'Download',cls:'btn-primary',fn:()=>downloadText(r.n+'.txt',r.body||'')}]);
+}
+function newReport(){
+  go('agent'); const i=$('#atask'); if(i) i.value='Build a weekly operations report';
+  setTimeout(()=>agentSend(),200);
+}
+
 function rAnalytics(){
-  const max = Math.max(...ANIM_BARS.map(b=>b.v));
-  return sHead('📈 Analytics','Leads, revenue and engagement in one place.') +
+  const st=store();
+  const bars=weekBars();
+  const max=Math.max(1,...bars.map(b=>b.v));
+  const runs=(S.runs||[]).length;
+  const files=st.files.length, docs=st.docs.length, reports=st.reports.length, posts=st.social.length;
+  const weekTotal=bars.reduce((a,b)=>a+b.v,0);
+  return sHead('Analytics','Everything you have actually done in this workspace.') +
     `<div class="grid grid-cols-2 gap-2">
-      ${sStat('Enquiries','128','#0a84ff','inbox')}
-      ${sStat('Qualified','46','#bf5af2','badge-check')}
-      ${sStat('Cost / lead','$2.14','#ff9f0a','coins')}
-      ${sStat('Revenue','$18.4k','#30d158','trending-up')}
+      ${sStat('Agent runs',String(runs),'#0a84ff','activity')}
+      ${sStat('Files',String(files),'#ff9f0a','folder')}
+      ${sStat('Documents',String(docs),'#32ade6','file-text')}
+      ${sStat('Reports',String(reports),'#30d158','bar-chart-3')}
     </div>` +
-    `<div class="mt-2">` + sBox(`<div class="flex items-center justify-between mb-3">
-        <div class="text-[12px] font-semibold">Enquiries · last 7 days</div>
-        <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">+12%</span></div>
-      <div class="flex items-end gap-2" style="height:140px">${ANIM_BARS.map((b,i)=>`
+    sBox(`<div class="flex items-center justify-between mb-3">
+        <div class="text-[12px] font-semibold">Activity · last 7 days</div>
+        <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">${weekTotal} actions</span></div>
+      <div class="flex items-end gap-2" style="height:140px">${bars.map(b=>`
         <div class="flex-1 flex flex-col items-center gap-1.5 h-full">
-          <div class="grow w-full flex items-end" style="min-height:0"><div class="growbar w-full rounded-t-md" data-h="${Math.round(b.v/max*100)}" style="height:4%;background:linear-gradient(180deg,#5ac8fa,#0a84ff)"></div></div>
+          <div class="grow w-full flex items-end" style="min-height:0"><div class="growbar w-full rounded-t-md" data-h="${Math.round(b.v/max*100)||2}" style="height:4%;background:linear-gradient(180deg,#5ac8fa,#0a84ff)"></div></div>
           <span class="text-[9.5px] text-[var(--muted)]">${b.l}</span>
-        </div>`).join('')}</div>`) + `</div>`;
+        </div>`).join('')}</div>
+      ${weekTotal?'':'<div class="text-[11px] text-[var(--muted)] mt-2">No activity yet — run an agent task.</div>'}`) +
+    sBox(`<div class="text-[12px] font-semibold mb-2">Social posts drafted</div>
+      <div class="text-[20px] font-semibold">${posts}</div>
+      <div class="text-[11px] text-[var(--muted)]">Saved from the Social Media workspace</div>`);
 }
+
 function rEmail(){
   return sHead('📧 Email','Outreach, follow-ups and replies — written for you, never sent without approval.') +
     `<div class="grid sm:grid-cols-2 gap-2">` +
@@ -2161,20 +2265,51 @@ function rEmail(){
         <button class="text-[11px] font-medium shrink-0" style="color:#0a84ff" onclick="askAgent('${t}')">Draft</button>
       </div>`)).join('') + `</div>`;
 }
+const PLATFORMS = [
+  {p:'Facebook', i:'facebook', c:'#1877f2'},{p:'Instagram', i:'instagram', c:'#e1306c'},
+  {p:'LinkedIn', i:'linkedin', c:'#0a66c2'},{p:'X', i:'twitter', c:'#111114'},
+  {p:'TikTok', i:'music-2', c:'#111114'},{p:'YouTube', i:'youtube', c:'#ff0000'},
+  {p:'Threads', i:'at-sign', c:'#111114'}
+];
 function rSocial(){
-  return sHead('📣 Social Media','Workspace for 7 platforms — write, schedule and review in one place.',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="askAgent('Build a 30-day social media plan for a visa consultancy')">${icon('calendar-plus','w-3.5 h-3.5')} Plan</button>`) +
-    `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">` + DEMO.social.map(p=>sBox(`<div class="text-center">
+  const st=store();
+  return sHead('Social Media','Pick a platform, write a post — it is saved to your queue and downloadable.',
+    `<button class="btn-glass px-3 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="go(\'agent\')">${icon('sparkles','w-3.5 h-3.5')} Let agent write</button>`) +
+    `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">` + PLATFORMS.map(p=>sBox(`<div class="text-center">
         <div class="w-9 h-9 mx-auto rounded-xl grid place-items-center mb-2" style="background:${p.c}14">${icon(p.i,'w-4 h-4',p.c)}</div>
         <div class="text-[12px] font-semibold">${p.p}</div>
-        <div class="text-[10.5px] text-[var(--muted)] mt-0.5">${p.f} · ${p.e}</div>
-        <div class="flex gap-1 mt-2 justify-center">
-          <button class="text-[10px] font-medium px-2 py-1 rounded-lg" style="background:${p.c}14;color:${p.c}" onclick="askAgent('Write 3 ${p.p} posts for a visa consultancy')">Post</button>
-          <button class="text-[10px] font-medium px-2 py-1 rounded-lg" style="background:rgba(0,0,0,.05);color:#5b5b66" onclick="toast('${p.p} schedule opened')">Plan</button>
-        </div>
-      </div>`)).join('') + `</div>` + `<div class="mt-2">`+sBox(`<div class="text-[12px] font-semibold mb-2">This week's queue</div>`+
-      sList(['Mon · Carousel — 5 visa myths busted','Wed · Reel — 30s study abroad hook','Fri · Post — client success story','Sun · Story poll — which country next?'],'calendar','#bf5af2'))+`</div>`;
+        <div class="text-[10px] text-[var(--muted)] mt-0.5">${st.social.filter(x=>x.p===p.p).length} drafted</div>
+        <button class="text-[10px] font-medium px-2 py-1 rounded-lg mt-2 w-full" style="background:${p.c}14;color:${p.c}" onclick="composePost('${p.p}')">Write post</button>
+      </div>`)).join('') + `</div>` +
+    sBox(`<div class="flex items-center justify-between mb-2">
+        <div class="text-[12px] font-semibold">Queue</div>
+        <span class="text-[10.5px] text-[var(--muted)]">${st.social.length} posts</span></div>` +
+      (st.social.length ? st.social.slice(0,8).map(x=>`<div class="py-1.5 border-b" style="border-color:rgba(0,0,0,.05)">
+        <div class="flex items-center gap-1.5"><span class="pill" style="background:rgba(0,0,0,.05);color:#5b5b66">${esc(x.p)}</span>
+        <span class="text-[10px] text-[var(--muted)] ml-auto">${new Date(x.at).toLocaleString()}</span></div>
+        <div class="text-[11.5px] mt-1 line-clamp-2">${esc(x.text)}</div></div>`).join('')
+      : '<div class="text-[11.5px] text-[var(--muted)] py-2">No posts yet.</div>'));
 }
+function composePost(platform){
+  modal(platform+' post', `<textarea id="spost" rows="5" placeholder="What should it say?" class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px] scrollarea" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)"></textarea>
+    <button class="btn-glass w-full mt-2 py-2 text-[12px] font-medium press" onclick="aiPost('${platform}')">Write it for me</button>`,
+    [{label:'Cancel',fn:closeModal},{label:'Save post',cls:'btn-primary',fn:()=>{
+      const t=($('#spost')?.value||'').trim(); if(!t){ toast('Write something first'); return; }
+      addSocial(platform,t); touchActivity(); closeModal(); renderSection('social'); toast('Saved to queue');
+    }}]);
+  setTimeout(()=>$('#spost')?.focus(),120);
+}
+async function aiPost(platform){
+  const ta=$('#spost'); if(!ta) return;
+  ta.value='Writing…';
+  try{
+    let txt;
+    if(S.mode!=='local' && hasCloudKey()) txt=await callModel(PRESETS.assistant,'Write one '+platform+' post for a visa consultancy. Max 60 words, no hashtags spam.',300);
+    else txt='Planning a visa this year? We map the documents, the timeline and the risks before you pay a single fee. Book a 15-minute consult and know exactly where you stand.';
+    ta.value=txt.replace(/[✅📌💡📋]/g,'').replace(/\*\*/g,'').slice(0,600);
+  }catch(e){ ta.value=''; toast('Failed: '+String(e.message).slice(0,40)); }
+}
+
 function rCRM(){
   return sHead('👥 CRM','Every lead, stage and value — updated by your agent as it works.') +
     `<div class="flex flex-col gap-2">` + DEMO.crm.map(c=>sBox(`<div class="flex items-center gap-3">
@@ -2275,19 +2410,6 @@ function rSettings(){
       <div class="text-[11px] text-[var(--muted)]">Requires the 6-digit access code again</div></div>
       <button class="btn-glass px-3 py-1.5 text-[12px] font-medium press" onclick="lockSite()">Lock</button></div>`) +
     `</div>`;
-}
-
-function renderDocuments(){
-  const el=document.getElementById('docsWrap'); if(!el) return;
-  el.innerHTML = sHead('📄 Documents','Draft, refine and export consulate-ready documents.',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="askAgent('Draft a visa application cover letter for a UAE work visa')">${icon('sparkles','w-3.5 h-3.5')} Draft</button>`) +
-    `<div class="grid sm:grid-cols-2 gap-2">` + DEMO.docs.map(d=>sBox(`<div class="flex items-start gap-3">
-        <div class="iconbox" style="background:${d.c}1a">${icon(d.i,'w-4 h-4',d.c)}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-semibold">${d.n}</div>
-        <div class="text-[11px] text-[var(--muted)] mt-0.5">${d.d}</div></div>
-        <button class="text-[11px] font-medium shrink-0" style="color:#0a84ff" onclick="askAgent('${d.n}')">Open</button>
-      </div>`)).join('') + `</div>`;
-  refreshIcons();
 }
 
 const SECTIONS = {browser:rBrowser, files:rFiles, documents:rDocs, reports:rReports, analytics:rAnalytics,
