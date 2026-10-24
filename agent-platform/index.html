@@ -729,7 +729,7 @@
   <div class="agentdock-in">
     <div class="flex items-center justify-between mb-1.5 px-0.5">
       <span class="text-[10.5px] font-semibold uppercase tracking-[.08em] text-[var(--muted)]">Agent prompt</span>
-      <span class="text-[10px] text-[var(--muted)]" id="dockState">idle</span>
+      <span class="text-[10px] text-[var(--muted)]" id="dockState">analyze → preview</span>
     </div>
     <div class="composer lg">
       <button class="w-8 h-8 rounded-full grid place-items-center text-[#8a8a94] hover:bg-black/5 press shrink-0" onclick="go('agent')" title="Open agent"><i data-lucide="bot" class="w-4 h-4"></i></button>
@@ -880,21 +880,11 @@ const NAV = [
   {g:'Workspace'},
   {id:'chat',  label:'Chat',        short:'Chat',     icon:'message-circle', view:true},
   {id:'agent', label:'Agent',       short:'Agent',    icon:'bot', view:true, pill:['live','#8b3fd0']},
-  {id:'browser',label:'Browser',    short:'Browser',  icon:'globe'},
   {id:'files', label:'Files',       short:'Files',    icon:'folder'},
   {id:'documents',label:'Documents',short:'Docs',     icon:'file-text'},
-  {g:'Growth'},
-  {id:'reports',label:'Reports',    short:'Reports',  icon:'bar-chart-3'},
-  {id:'email', label:'Email',       short:'Email',    icon:'mail'},
-  {id:'social',label:'Social Media',short:'Social',   icon:'megaphone'},
-  {id:'crm',   label:'CRM',         short:'CRM',      icon:'users'},
-  {g:'Intelligence'},
-  {id:'brain', label:'Knowledge Base',short:'Knowledge',icon:'brain'},
-  {id:'research',label:'Research',  short:'Research', icon:'search'},
-  {id:'workflows',label:'Workflows',short:'Flows',    icon:'workflow'},
   {id:'tasks', label:'Tasks',       short:'Tasks',    icon:'list-checks', pill:['0','#0a84ff','taskPill']},
-  {g:'System'},
-  {id:'analytics',label:'Analytics',short:'Analytics',icon:'trending-up'},
+  {id:'reports',label:'Reports',    short:'Reports',  icon:'bar-chart-3'},
+  {id:'social',label:'Social Media',short:'Social',   icon:'megaphone'},
   {id:'settings',label:'Settings',  short:'Settings', icon:'settings'}
 ];
 function renderNav(){
@@ -932,7 +922,7 @@ let view = 'dashboard';
 function go(v){
   view = v;
   document.querySelectorAll('.view').forEach(el=>el.classList.toggle('on', el.id==='view-'+v));
-  document.querySelectorAll('.navitem[data-view]').forEach(el=>el.classList.toggle('active', el.dataset.view===v));
+  const NAVALIAS={}; document.querySelectorAll('.navitem[data-view]').forEach(el=>el.classList.toggle('active', el.dataset.view===(NAVALIAS[v]||v)));
   if(v==='agent') renderAgent();
   if(v==='skills') renderSkills();
   if(v==='brain'){ renderBrain(); renderKnowledgeBoard(); }
@@ -1702,190 +1692,195 @@ const DASH_QUICK = [
   {t:'Research a market', d:'Sources, dates, comparison', i:'search', c:'#5e5ce6', act:"go('research')"},
   {t:'Draft a document', d:'Proposal, SOP, cover letter', i:'file-text', c:'#ff9f0a', act:"go('documents')"}
 ];
-const STATUS_COLORS = {pending:'#8a8a94', running:'#0a84ff', reviewing:'#ff9f0a', completed:'#30d158', failed:'#ff375f'};
+const STATUS_COLORS = {pending:'#8a8a94', analyzing:'#0a84ff', ready:'#ff9f0a', reviewing:'#ff9f0a', running:'#0a84ff', completed:'#30d158', failed:'#ff375f'};
 function statusPill(st){
   const c=STATUS_COLORS[st]||'#8a8a94';
   return `<span class="pill" style="background:${c}1f;color:${c}"><span class="w-1.5 h-1.5 rounded-full inline-block mr-1" style="background:${c}"></span>${st}</span>`;
 }
 function renderDash(){
   const el=document.getElementById('dashWrap'); if(!el) return;
-  const runs=(S.runs||[]).slice(0,4);
+  const runs=(S.runs||[]);
+  const a=aStatus();
+  const pending = runs.filter(r=>!r.done).length + (a.goal && a.status!=='completed' ? 1 : 0);
+  const cards = [
+    {k:'tasks',   t:'Tasks',        v:runs.length + (a.goal?1:0), s:pending+' open', c:'#0a84ff', i:'list-checks', go:'tasks'},
+    {k:'runs',    t:'Agent Runs',   v:runs.length,               s:'all time',      c:'#bf5af2', i:'bot', go:'agent'},
+    {k:'files',   t:'Files',        v:DEMO.files.length,         s:'2 new',         c:'#ff9f0a', i:'folder', go:'files'},
+    {k:'docs',    t:'Documents',    v:DEMO.docs.length,          s:'templates',     c:'#32ade6', i:'file-text', go:'documents'},
+    {k:'reports', t:'Reports',      v:DEMO.reports.length,       s:'1 due',         c:'#30d158', i:'bar-chart-3', go:'reports'},
+    {k:'social',  t:'Social Media', v:DEMO.social.length,        s:'7 platforms',   c:'#ff375f', i:'megaphone', go:'social'}
+  ];
   const hour=new Date().getHours();
   const hi = hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
   el.innerHTML = `
-    <div class="flex items-start justify-between gap-3 mb-4 anim" style="align-items:flex-end">
-      <div>
-        <h1 class="text-[26px] sm:text-[30px] font-semibold tracking-tight leading-tight">${hi}, welcome back</h1>
-        <p class="text-[12.5px] text-[var(--muted)] mt-1">${S.company||'VisaHOBe'} · ${S.mode==='local'?'Local engine':'Cloud engine'} · ${SKILLS.filter((s,i)=>S.skills[i]).length} skills active</p>
+    <div class="flex items-end justify-between gap-3 mb-5 anim" style="flex-wrap:nowrap">
+      <div class="min-w-0">
+        <h1 class="text-[27px] sm:text-[32px] font-semibold tracking-tight leading-tight">${hi}</h1>
+        <p class="text-[12.5px] text-[var(--muted)] mt-1 truncate">${S.company||'VisaHOBe'} · ${S.mode==='local'?'Local engine':'Cloud engine'}</p>
       </div>
-      <button class="btn-primary tinted px-3.5 py-2 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="go('agent')">New task</button>
+      <button class="btn-primary px-4 py-2.5 text-[12.5px] font-medium press shrink-0 whitespace-nowrap" onclick="go('agent')">New task</button>
     </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 mb-3" id="dashStats">
-      ${sStat('Agent runs','' + (S.runs?.length||0),'#0a84ff','activity')}
-      ${sStat('Completed','' + (S.runs?.length||0),'#30d158','badge-check')}
-      ${sStat('Skills active','' + SKILLS.filter((s,i)=>S.skills[i]).length,'#bf5af2','puzzle')}
-      ${sStat('Memories','' + S.mem.length,'#ff9f0a','brain')}
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 mb-5">
+      ${cards.map((c,i)=>`
+        <button class="dashcard lg card lift anim press text-left" style="padding:15px;animation-delay:${i*40}ms" onclick="go('${c.go}')">
+          <div class="flex items-start justify-between mb-3">
+            <span class="w-9 h-9 rounded-xl grid place-items-center" style="background:${c.c}16">${icon(c.i,'w-4 h-4',c.c)}</span>
+            ${icon('arrow-up-right','w-3.5 h-3.5','#c3c3cc')}
+          </div>
+          <div class="text-[24px] font-semibold tracking-tight leading-none">${c.v}</div>
+          <div class="text-[12px] font-medium mt-1.5">${c.t}</div>
+          <div class="text-[10.5px] text-[var(--muted)] mt-0.5">${c.s}</div>
+        </button>`).join('')}
     </div>
 
     <div class="grid lg:grid-cols-3 gap-2.5">
       <div class="lg:col-span-2 flex flex-col gap-2.5">
-        <div class="lg card anim in" style="padding:14px">
+        <div class="lg card anim in" style="padding:15px">
           <div class="flex items-center justify-between mb-2.5">
-            <div class="text-[13px] font-semibold">Quick start</div>
+            <div class="text-[13px] font-semibold">Start here</div>
             <span class="text-[10.5px] text-[var(--muted)]">Chat and Agent are separate</span>
           </div>
           <div class="grid sm:grid-cols-2 gap-2">
-            ${DASH_QUICK.map(q=>`
-              <button class="text-left px-3 py-2.5 rounded-xl press transition" style="background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="${q.act}">
-                <div class="flex items-center gap-2 mb-1"><span class="w-6 h-6 rounded-lg grid place-items-center" style="background:${q.c}18">${icon(q.i,'w-3.5 h-3.5',q.c)}</span>
-                <span class="text-[12.5px] font-semibold">${q.t}</span></div>
-                <span class="text-[11px] text-[var(--muted)]">${q.d}</span>
-              </button>`).join('')}
+            <button class="text-left px-3.5 py-3 rounded-xl press" style="background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="go('chat')">
+              <div class="flex items-center gap-2 mb-1"><span class="w-6 h-6 rounded-lg grid place-items-center" style="background:rgba(10,132,255,.12)">${icon('message-circle','w-3.5 h-3.5','#0a84ff')}</span>
+              <span class="text-[12.5px] font-semibold">Chat with Nova</span></div>
+              <span class="text-[11px] text-[var(--muted)]">Fast answers, no execution</span>
+            </button>
+            <button class="text-left px-3.5 py-3 rounded-xl press" style="background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="go('agent')">
+              <div class="flex items-center gap-2 mb-1"><span class="w-6 h-6 rounded-lg grid place-items-center" style="background:rgba(191,90,242,.12)">${icon('bot','w-3.5 h-3.5','#bf5af2')}</span>
+              <span class="text-[12.5px] font-semibold">Run a task</span></div>
+              <span class="text-[11px] text-[var(--muted)]">Preview, approve, then execute</span>
+            </button>
           </div>
         </div>
 
-        <div class="lg card anim in" style="padding:14px">
-          <div class="flex items-center justify-between mb-2.5">
+        <div class="lg card anim in" style="padding:15px">
+          <div class="flex items-center justify-between mb-2">
             <div class="text-[13px] font-semibold">Recent runs</div>
-            <button class="text-[11px] font-medium" style="color:#0a84ff" onclick="go('tasks')">All tasks →</button>
+            <button class="text-[11px] font-medium" style="color:#0a84ff" onclick="go('tasks')">All →</button>
           </div>
-          ${runs.length ? runs.map(r=>`<div class="flex items-center gap-2.5 py-1.5">
+          ${runs.length ? runs.slice(0,4).map(r=>`<div class="flex items-center gap-2.5 py-1.5">
             <span class="w-6 h-6 rounded-lg grid place-items-center shrink-0" style="background:rgba(48,209,88,.12)">${icon('check','w-3 h-3','#1d9b41')}</span>
             <div class="flex-1 min-w-0"><div class="text-[12px] font-medium truncate">${esc(r.task)}</div>
             <div class="text-[10.5px] text-[var(--muted)]">${new Date(r.at).toLocaleString()} · ${(r.ms/1000).toFixed(1)}s</div></div>
-            ${statusPill('completed')}</div>`).join('')
-          : `<div class="text-[12px] text-[var(--muted)] py-3">No runs yet. Start your first agent task.</div>`}
+            <span class="pill" style="background:rgba(48,209,88,.14);color:#1d9b41">done</span></div>`).join('')
+          : '<div class="text-[12px] text-[var(--muted)] py-2">No runs yet — start one from Agent.</div>'}
         </div>
       </div>
 
       <div class="flex flex-col gap-2.5">
-        <div class="lg card anim in" style="padding:14px">
-          <div class="flex items-center justify-between mb-2">
-            <div class="text-[13px] font-semibold">7-day activity</div>
-            <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">live</span>
-          </div>
-          <div class="flex items-end gap-1.5" style="height:96px">
-            ${ANIM_BARS.map(b=>`<div class="flex-1 flex flex-col items-center gap-1 h-full">
-              <div class="grow w-full flex items-end"><div class="growbar w-full rounded-t-md" data-h="${b.v}" style="height:4%;background:linear-gradient(180deg,#5ac8fa,#0a84ff)"></div></div>
-              <span class="text-[9px] text-[var(--muted)]">${b.l[0]}</span></div>`).join('')}
-          </div>
+        <div class="lg card anim in" style="padding:15px">
+          <div class="text-[13px] font-semibold mb-2">Install the app</div>
+          <div class="text-[11px] text-[var(--muted)] mb-2.5">Own icon, full screen, offline.</div>
+          <button class="btn-glass w-full py-2 text-[12px] font-medium press" onclick="installApp()">Install</button>
         </div>
-        <div class="lg card anim in" style="padding:14px">
-          <div class="text-[13px] font-semibold mb-2">Built-in skills</div>
-          <div class="flex flex-wrap gap-1.5">
-            ${SKILLS.filter((s,i)=>S.skills[i]).slice(0,8).map(s=>`<span class="pill" style="background:${s.color}16;color:${s.color}">${esc(s.name)}</span>`).join('')}
-          </div>
-          <button class="text-[11px] font-medium mt-2.5" style="color:#0a84ff" onclick="go('skills')">Manage skills →</button>
-        </div>
-        <div class="lg card anim in" style="padding:14px">
-          <div class="text-[13px] font-semibold mb-1.5">Install the app</div>
-          <div class="text-[11px] text-[var(--muted)] mb-2">Own icon, full screen, offline.</div>
-          <button class="btn-glass w-full py-1.5 text-[11.5px] font-medium press" onclick="installApp()">Install</button>
+        <div class="lg card anim in" style="padding:15px">
+          <div class="text-[13px] font-semibold mb-2">Execution stack</div>
+          <div class="flex flex-wrap gap-1.5">${AGENT_MODULES.map(m=>`<span class="pill" style="background:rgba(10,132,255,.09);color:#0a6bd0">${m}</span>`).join('')}</div>
+          <div class="text-[11px] text-[var(--muted)] mt-2.5">${S.bbKey?'Browser Use connected':'Add a Browser Use key for real sessions'}</div>
         </div>
       </div>
     </div>`;
   refreshIcons();
   el.querySelectorAll('.anim').forEach(n=>n.classList.add('in'));
-  el.querySelectorAll('.growbar').forEach((b,i)=>setTimeout(()=>{ b.style.transition='height .7s cubic-bezier(.2,.8,.2,1)'; b.style.height=b.dataset.h+'%'; },60+i*50));
 }
 
 /* ═══════════ AGENT CONSOLE (6-stage flow) ═══════════ */
 const A_STAGES = [
-  {id:'analyze', n:'Analyze task',   d:'Goal, inputs, constraints', i:'scan-search'},
-  {id:'plan',    n:'Execution plan', d:'Ordered steps and skills',  i:'list-ordered'},
-  {id:'run',     n:'Live progress',  d:'Browser · research · files', i:'play-circle'},
-  {id:'preview', n:'Preview results',d:'Output before delivery',    i:'monitor-play'},
-  {id:'approve', n:'Approve & run',  d:'Your sign-off to deliver',  i:'shield-check'},
-  {id:'final',   n:'Final output',   d:'Delivered and logged',      i:'package-check'}
+  {id:'task',    n:'Task',     d:'What you want done'},
+  {id:'analyze', n:'Analyze',  d:'Intent, plan and steps'},
+  {id:'preview', n:'Preview',  d:'Plan · output · files · actions'},
+  {id:'approve', n:'Approve',  d:'Your sign-off'},
+  {id:'execute', n:'Execute',  d:'Browser, tools and files'},
+  {id:'results', n:'Results',  d:'Final output and log'}
 ];
 const AGENT_MODULES = ['Browser Use','Playwright','Gemini API'];
-const CHECKS = ['Self-check','Output review','Error detection','Preview','Link validation'];
+const CHECKS = ['Plan reviewed','Output review','Error detection','Files listed','Actions confirmed'];
+const PV_TABS = [['plan','Plan'],['output','Output'],['files','Files'],['actions','Actions']];
 
-function aStatus(){ return S.agent||{stage:0,status:'pending',goal:'',log:[]}; }
+function aStatus(){
+  const a = S.agent || {};
+  return {stage:0,status:'pending',goal:'',log:[],plan:null,output:'',files:[],actions:[],tab:'plan', ...a};
+}
 function setAStatus(patch){ S.agent=Object.assign(aStatus(),patch); save(); }
+function statusPill(st){
+  const c={pending:'#8a8a94',analyzing:'#0a84ff',ready:'#ff9f0a',running:'#0a84ff',completed:'#30d158',failed:'#ff375f'}[st]||'#8a8a94';
+  return `<span class="pill" style="background:${c}1f;color:${c}"><span class="w-1.5 h-1.5 rounded-full inline-block mr-1" style="background:${c}"></span>${st}</span>`;
+}
 
 function renderAgent(){
   const el=document.getElementById('agentWrap'); if(!el) return;
   const a=aStatus();
+  const goalEsc=esc(a.goal||'');
+  const ready=a.status==='ready';
   el.innerHTML = `
     <div class="flex items-end justify-between gap-3 mb-4 anim" style="flex-wrap:nowrap">
       <div>
-        <h1 class="text-[24px] sm:text-[26px] font-semibold tracking-tight leading-tight">🤖 Agent</h1>
-        <p class="text-[12.5px] text-[var(--muted)] mt-1">Autonomous execution — analyze, plan, run, preview, approve, deliver.</p>
+        <h1 class="text-[24px] sm:text-[26px] font-semibold tracking-tight leading-tight">Agent</h1>
+        <p class="text-[12.5px] text-[var(--muted)] mt-1">Task → Analyze → Preview → Approve → Execute → Results.</p>
       </div>
       ${statusPill(a.status)}
     </div>
 
     <div class="lg card anim in mb-2.5" style="padding:14px">
       <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">Task</div>
-      <textarea id="taskGoal" rows="2" placeholder="e.g. Research 3 competitors, compare pricing and build a one-page brief" class="w-full px-3 py-2.5 rounded-xl text-[16px] sm:text-[13px] leading-snug bg-white/95 outline-none scrollarea" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.09);resize:none">${esc(a.goal||'')}</textarea>
+      <textarea id="taskGoal" rows="2" placeholder="e.g. Research 3 competitors, compare pricing and build a one-page brief" class="w-full px-3 py-2.5 rounded-xl text-[16px] sm:text-[13px] leading-snug bg-white/95 outline-none" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.09);resize:none">${goalEsc}</textarea>
       <div class="flex items-center justify-between gap-2 mt-2.5 flex-wrap">
         <div class="flex items-center gap-1 flex-wrap">
           ${AGENT_MODULES.map(m=>`<span class="pill" style="background:rgba(10,132,255,.09);color:#0a6bd0">${m}</span>`).join('')}
           ${S.bbKey?`<span class="pill" style="background:rgba(48,209,88,.12);color:#1d9b41">BU key</span>`:''}
         </div>
-        <button class="btn-primary px-4 py-2 text-[12.5px] font-medium press inline-flex items-center gap-1.5 shrink-0" onclick="agentStart()">
-          ${icon('play','w-3.5 h-3.5','#fff')} Start agent
-        </button>
+        <div class="flex items-center gap-1.5">
+          ${a.goal?`<button class="btn-glass px-3 py-2 text-[12px] font-medium press" onclick="agentReset()">Clear</button>`:''}
+          <button class="btn-primary px-4 py-2 text-[12.5px] font-medium press inline-flex items-center gap-1.5 shrink-0" onclick="agentAnalyze()">
+            ${icon('scan-search','w-3.5 h-3.5','#fff')} Analyze
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-2.5 mb-2.5">
-      <div class="lg card anim in" style="padding:14px">
-        <div class="flex items-center justify-between mb-2">
-          <div class="text-[12.5px] font-semibold">Flow</div>
-          <span class="text-[10.5px] text-[var(--muted)]" id="aProgress">${a.stage} / 6</span>
-        </div>
-        <div class="flex flex-col gap-0.5" id="aStages">
-          ${A_STAGES.map((st,i)=>{
-            const doneSet = i < a.stage, cur = i === a.stage && a.status!=='completed';
-            const c = a.status==='failed' && i===a.stage ? '#ff375f' : doneSet?'#30d158':cur?'#0a84ff':'#c3c3cc';
-            return `<div class="flex items-center gap-2.5 py-1.5">
-              <span class="w-6 h-6 rounded-full grid place-items-center shrink-0" style="background:${c}1a">${doneSet?icon('check','w-3.5 h-3.5',c):icon(st.i,'w-3.5 h-3.5',c)}</span>
-              <div class="flex-1 min-w-0"><div class="text-[12px] font-medium" style="color:${doneSet||cur?'#1b1b22':'#9a9aa6'}">${st.n}</div>
-              <div class="text-[10.5px] text-[var(--muted)]">${st.d}</div></div>
-              ${cur?'<span class="live-dot"></span>':''}
-            </div>`;
-          }).join('')}
-        </div>
-      </div>
-
-      <div class="lg card anim in" style="padding:14px">
-        <div class="flex items-center justify-between mb-2">
-          <div class="text-[12.5px] font-semibold">Live validation</div>
-          <span class="pill" id="valPill" style="background:rgba(0,0,0,.05);color:#8a8a94">${a.status==='completed'?'passed':'idle'}</span>
-        </div>
-        <div id="valList">${CHECKS.map((c,i)=>`<div class="flex items-center gap-2 py-1.5" data-chk="${i}">
-          <span class="w-3.5 h-3.5 rounded-full grid place-items-center shrink-0" style="background:${a.status==='completed'?'#30d158':'#e6e6ec'}">${a.status==='completed'?icon('check','w-2.5 h-2.5','#fff'):''}</span>
-          <span class="text-[12px]">${c}</span></div>`).join('')}</div>
-      </div>
+    <div class="flex items-center gap-1 mb-2.5 overflow-x-auto" style="scrollbar-width:none">
+      ${A_STAGES.map((st,i)=>{
+        const done=i<a.stage || a.status==='completed', cur=i===a.stage && a.status!=='completed' && a.status!=='ready';
+        const c=done?'#30d158':cur?'#0a84ff':'#c3c3cc';
+        return `<div class="flex items-center gap-1 shrink-0">
+          <span class="pill" style="background:${c}1a;color:${done||cur?c:'#9a9aa6'}">${done?'✓ ':''}${st.n}</span>
+          ${i<A_STAGES.length-1?`<span style="color:#d6d6de;font-size:10px">→</span>`:''}
+        </div>`;
+      }).join('')}
     </div>
 
     <div class="grid lg:grid-cols-2 gap-2.5">
       <div class="lg card anim in" style="padding:14px">
         <div class="flex items-center justify-between mb-2">
-          <div class="text-[12.5px] font-semibold">Execution console</div>
+          <div class="text-[12.5px] font-semibold">Agent log</div>
           <span class="text-[10.5px] text-[var(--muted)]" id="aConsoleState">${esc(a.status)}</span>
         </div>
-        <div id="aConsole" class="flex flex-col gap-1.5"></div>
+        <div id="aConsole" class="flex flex-col gap-1.5" style="max-height:340px;overflow:auto">
+          <div class="text-[11.5px] text-[var(--muted)]">Describe a task above, then press Analyze.</div>
+        </div>
       </div>
 
       <div class="lg card anim in" style="padding:14px">
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-1.5"><span class="live-dot"></span>
-            <span class="text-[12.5px] font-semibold">Preview</span></div>
-          <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">always on</span>
+            <span class="text-[12.5px] font-semibold">Live preview</span></div>
+          <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">before execution</span>
         </div>
-        <div id="aPreview" class="scrollarea pr-0.5" style="max-height:300px;min-height:150px">
-          <div class="text-[11.5px] text-[var(--muted)] px-0.5">Waiting for a task — describe one above and press Start agent.</div>
+        <div class="seg lg mb-2" style="background:rgba(0,0,0,.04)">
+          ${PV_TABS.map(([k,l])=>`<button class="pvtab" data-tab="${k}" onclick="pvTab('${k}')" style="${a.tab===k?'background:#fff;color:#0b0b0f;box-shadow:0 1px 3px rgba(0,0,0,.1)':'color:#6b6b76'}">${l}${k==='files'&&a.files.length?' ('+a.files.length+')':''}${k==='actions'?' ('+(a.actions.length||0)+')':''}</button>`).join('')}
         </div>
+        <div id="aPreview" class="scrollarea pr-0.5" style="max-height:300px;min-height:150px"></div>
+        ${ready?`<button class="btn-primary w-full mt-2.5 py-2 text-[12.5px] font-medium press inline-flex items-center justify-center gap-1.5" onclick="agentApprove()">
+            ${icon('badge-check','w-3.5 h-3.5','#fff')} Approve & run
+          </button>`:''}
       </div>
     </div>`;
   refreshIcons();
   el.querySelectorAll('.anim').forEach(n=>n.classList.add('in'));
-  if(a.log && a.log.length) a.log.forEach(l=>aLine(l.t, l.k));
-  if(a.status==='preview') showApprove(true);
+  paintAgentLog();
+  paintPreview();
 }
 
 function aLine(text, kind){
@@ -1894,128 +1889,129 @@ function aLine(text, kind){
   const c=map[kind||'info'];
   const row=document.createElement('div');
   row.className='flex items-start gap-2';
-  row.style.animation='pop .3s var(--ease)';
   row.innerHTML=`<span class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style="background:${c}"></span><span class="text-[11.5px] leading-snug" style="color:#3a3a44">${text}</span>`;
   box.appendChild(row); box.scrollTop=1e9;
 }
-function aLog(text, kind){ const a=aStatus(); a.log.push({t:text,k:kind}); if(a.log.length>40)a.log.shift(); setAStatus(a); aLine(text,kind); }
-function showApprove(on){
-  const el=document.getElementById('aApprove'); if(el) el.classList.toggle('hidden', !on);
+function paintAgentLog(){
+  const box=document.getElementById('aConsole'); if(!box) return;
+  const a=aStatus();
+  if(!a.log.length){ box.innerHTML='<div class="text-[11.5px] text-[var(--muted)]">Describe a task above, then press Analyze.</div>'; return; }
+  box.innerHTML='';
+  a.log.forEach(l=>aLine(l.t,l.k));
 }
-function agentStage(i, status){
-  setAStatus({stage:i, status});
-  const pr=document.getElementById('aProgress'); if(pr) pr.textContent=i+' / 6';
-  const cs=document.getElementById('aConsoleState'); if(cs) cs.textContent=status;
-  const head=document.querySelector('#agentWrap .pill[style*="background"]');
-  document.querySelectorAll('#aStages > div').forEach((row,idx)=>{
-    const done = idx < i, cur = idx === i && status!=='completed';
-    const c = status==='failed' && idx===i ? '#ff375f' : done?'#30d158':cur?'#0a84ff':'#c3c3cc';
-    const dot=row.querySelector('span');
-    if(dot){ dot.style.background=c+'1a'; dot.innerHTML = done ? '<i data-lucide="check" class="w-3.5 h-3.5" style="color:'+c+'"></i>' : '<i data-lucide="'+A_STAGES[idx].i+'" class="w-3.5 h-3.5" style="color:'+c+'"></i>'; }
-    const t=row.querySelector('.text-\\[12px\\]'); if(t) t.style.color = (done||cur) ? '#1b1b22' : '#9a9aa6';
-  });
+function aLog(text, kind){ const a=aStatus(); a.log=[]; a.log.push({t:text,k:kind}); setAStatus(a); aLine(text,kind); }
+
+function paintPreview(){
+  const el=document.getElementById('aPreview'); if(!el) return;
+  const a=aStatus();
+  if(a.tab==='plan'){
+    if(!a.plan){ el.innerHTML='<div class="text-[11.5px] text-[var(--muted)]">The plan appears here after analysis — nothing runs until you approve.</div>'; return; }
+    el.innerHTML = a.plan.map((st,i)=>`<div class="flex items-start gap-2 py-1.5">
+      <span class="w-5 h-5 rounded-full grid place-items-center shrink-0 text-[10px] font-semibold" style="background:rgba(10,132,255,.12);color:#0a6bd0">${i+1}</span>
+      <div class="min-w-0"><div class="text-[12px] font-medium">${esc(st[0])}</div>
+      <div class="text-[10.5px] text-[var(--muted)]">${esc(st[1])}</div></div></div>`).join('');
+    return;
+  }
+  if(a.tab==='output'){
+    el.innerHTML = a.output ? a.output : '<div class="text-[11.5px] text-[var(--muted)]">The draft output appears here before execution. You can read it and approve only when it is right.</div>';
+    return;
+  }
+  if(a.tab==='files'){
+    el.innerHTML = a.files.length ? a.files.map(f=>`<div class="flex items-center gap-2 py-1.5">
+      ${icon('file','w-3.5 h-3.5','#0a84ff')}<span class="text-[12px] flex-1 truncate">${esc(f)}</span>
+      <span class="pill" style="background:rgba(0,0,0,.05);color:#8a8a94">on approve</span></div>`).join('')
+      : '<div class="text-[11.5px] text-[var(--muted)]">No files yet. Files the agent will create are listed here.</div>';
+    return;
+  }
+  el.innerHTML = a.actions.length ? a.actions.map(x=>`<div class="flex items-center gap-2 py-1.5">
+      ${icon('check','w-3.5 h-3.5','#30d158')}<span class="text-[12px] flex-1">${esc(x)}</span></div>`).join('')
+    : '<div class="text-[11.5px] text-[var(--muted)]">Actions are listed after analysis.</div>';
   refreshIcons();
 }
-async function agentStart(){
+function pvTab(k){ setAStatus({tab:k}); document.querySelectorAll('#agentWrap .pvtab').forEach(b=>{
+  const on=b.dataset.tab===k;
+  b.style.background=on?'#fff':'transparent'; b.style.color=on?'#0b0b0f':'#6b6b76';
+  b.style.boxShadow=on?'0 1px 3px rgba(0,0,0,.1)':'none';
+}); paintPreview(); }
+
+function agentReset(){
+  S.agent={stage:0,status:'pending',goal:'',log:[],plan:null,output:'',files:[],actions:[],tab:'plan'};
+  save(); renderAgent();
+}
+
+/* Step 2: analyze only — nothing executes */
+async function agentAnalyze(){
   if(agentBusy) return;
   const goal=(document.getElementById('taskGoal')?.value||'').trim();
   if(!goal){ toast('Describe the task first'); return; }
   agentBusy=true;
-  setAStatus({stage:0,status:'running',goal,log:[]});
-  renderAgent();
   const type=taskType(goal);
   const plan=(STEPS[type]||STEPS.default);
+  const files = type==='proposal' ? ['Client_Proposal.pdf','Pricing_Sheet.pdf']
+              : type==='data' ? ['Summary_Table.csv','Report.pdf']
+              : type==='research' ? ['Comparison_Brief.pdf']
+              : ['Deliverable.md'];
+  const actions = ['Open source pages in browser','Extract and verify facts','Draft the deliverable','Run self-check and validation','Save files to Files'];
 
-  aLine('Task received: '+esc(goal.slice(0,90)),'info');
-  await wait(200);
-  agentStage(1,'running');
-  aLine('Intent detected · type <b>'+type+'</b>','ok');
-  aLine('Skills matched: '+(SKILLS.filter((s,i)=>S.skills[i]).slice(0,4).map(s=>s.name).join(', ')||'core'),'muted');
-  aLine('Runtime: '+(S.mode==='local'?'Local engine':'Gemini · '+(hasCloudKey()?'live':'simulation'))+(S.bbKey?' + Browser Use live':' + local browser sim'),'info');
-  await wait(600);
+  S.agent={stage:1,status:'analyzing',goal,log:[],plan,output:'',files,actions,tab:'plan'}; save();
+  document.querySelectorAll('#agentWrap .anim').forEach(n=>n.classList.add('in'));
+  renderAgent();
+  aLog('Task received: '+esc(goal.slice(0,90)),'info');
+  await wait(320);
+  aLog('Intent: <b>'+type+'</b> · skills: '+(SKILLS.filter((s,i)=>S.skills[i]).slice(0,4).map(s=>s.name).join(', ')||'core'),'ok');
+  aLog('Runtime: '+(S.mode==='local'?'Local engine':'Gemini · '+(hasCloudKey()?'live':'simulation'))+(S.bbKey?' + Browser Use':' + browser sim'),'info');
+  aLog('Plan built · '+plan.length+' steps · preview ready','ok');
 
-  agentStage(2,'running');
-  aLine('Plan: '+plan.length+' steps · '+AGENT_MODULES.join(' → '),'ok');
-  for(const st of plan) aLine('&nbsp;&nbsp;'+esc(st[0]),'muted');
-  await wait(700);
+  // draft the output preview before approval
+  let out='';
+  if(S.mode!=='local' && hasCloudKey()){
+    try{ out = fmt(await callModel(PRESETS.agent,'Preview only — do not claim work is finished.\nTask: '+goal+'\nReturn a concise draft deliverable.',900)); }
+    catch(e){ out='<div style="color:#ff375f;font-size:12px">'+esc(String(e.message).slice(0,140))+'</div>'; }
+  } else { out = fmt(structuredAnswer(goal,false)); }
 
-  agentStage(3,'running');
-  for(let i=0;i<plan.length;i++){
-    aLine('▶ '+esc(plan[i][0])+' — '+esc(plan[i][1]),'info');
-    await wait(420+Math.random()*280);
-    aLine('✓ done','ok');
+  S.agent=Object.assign(aStatus(),{stage:2,status:'ready',output:out}); save();
+  renderAgent();
+  aLog('Preview ready — waiting for your approval','warn');
+  const tp0=document.getElementById('taskPill'); if(tp0) tp0.textContent=String((S.runs||[]).length+1);
+  agentBusy=false;
+}
+
+/* Step 4: approve, then execute */
+async function agentApprove(){
+  if(agentBusy) return;
+  const a=aStatus();
+  if(!a.plan){ toast('Analyze the task first'); return; }
+  agentBusy=true;
+  setAStatus({stage:4,status:'running'}); renderAgent();
+  aLog('Approved by you — executing','info');
+  for(let i=0;i<a.plan.length;i++){
+    aLog('▶ '+esc(a.plan[i][0]),'info');
+    await wait(300+Math.random()*220);
+    aLog('✓ done','ok');
   }
-  if(S.bbKey){ aLine('Browser Use session attached','ok'); }
-
-  agentStage(4,'preview');
-  await agentDeliver(goal);
-  aLine('Preview rendered — delivering final output','info');
-  await wait(500);
-  agentStage(6,'completed');
-  aLine('✓ Delivered to Preview · logged','ok');
-  const vp=document.getElementById('valPill'); if(vp){ vp.textContent='passed'; vp.style.background='rgba(48,209,88,.14)'; vp.style.color='#1d9b41'; }
-  document.querySelectorAll('#valList [data-chk] span').forEach(n=>{ n.style.background='#30d158'; n.innerHTML='<i data-lucide="check" class="w-2.5 h-2.5" style="color:#fff"></i>'; });
-  refreshIcons();
-  S.runs.unshift({task:goal, ms:4200, at:new Date().toISOString(), engine:'Agent · '+(S.mode==='local'?'Local':'Cloud')});
+  if(S.bbKey) aLog('Browser Use session attached','ok');
+  aLog('Files written: '+a.files.join(', '),'ok');
+  await wait(300);
+  setAStatus({stage:5,status:'completed'});
+  const prev=a.output;
+  S.runs.unshift({task:a.goal, ms:3600, at:new Date().toISOString(), engine:'Agent · approved'});
   S.runs=S.runs.slice(0,40); save();
   const rp=document.getElementById('runPill'); if(rp) rp.textContent=S.runs.length;
-  toast('Task complete — result in Preview');
+  const tp=document.getElementById('taskPill'); if(tp) tp.textContent=S.runs.length;
+  renderAgent();
+  aLog('✓ Delivered · result below and logged to Tasks','ok');
+  const el=document.getElementById('aPreview');
+  if(el){ el.innerHTML = `<div class="mini-h" style="color:#1d9b41">Result · ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>${prev}`; refreshIcons(); }
+  toast('Task complete');
   agentBusy=false;
-  const ds=document.getElementById('dockState'); if(ds) ds.textContent='done';
 }
 
 function dockRun(){
   const el=document.getElementById('dockPrompt'); const t=(el?.value||'').trim();
-  if(!t){ go('agent'); return; }
-  const ds=document.getElementById('dockState'); if(ds) ds.textContent='running';
   go('agent');
-  const ta=document.getElementById('taskGoal'); if(ta){ ta.value=t; }
-  setTimeout(()=>agentStart(), 120);
-}
-async function agentDeliver(goal){
-  const box=document.getElementById('aPreview');
-  let html='';
-  if(S.mode!=='local' && hasCloudKey()){
-    try{ html = fmt(await callModel(PRESETS.agent, 'Task: '+goal+'\nReturn the final deliverable in the required format.', 1200)); }
-    catch(e){ html = `<div style="color:#ff375f;font-size:12px">${esc(String(e.message).slice(0,140))}</div>`; }
-  } else {
-    html = fmt(structuredAnswer(goal,false));
-  }
-  const card=document.createElement('div');
-  card.className='rounded-xl';
-  card.innerHTML=`<div class="mini-h" style="color:#0a6bd0">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} · task output</div>${html}`;
-  box.innerHTML=''; box.appendChild(card); refreshIcons();
-  ['valList'].forEach(()=>{});
-  document.querySelectorAll('#valList [data-chk]').forEach(n=>{
-    n.querySelector('span').style.background='#ffd60a';
-  });
-  const vp=document.getElementById('valPill'); if(vp){ vp.textContent='checking'; }
-  await wait(500);
-  document.querySelectorAll('#valList [data-chk]').forEach(n=>{
-    n.querySelector('span').style.background='#30d158';
-    n.querySelector('span').innerHTML='';
-  });
-  if(vp){ vp.textContent='ready'; vp.style.background='rgba(255,214,10,.2)'; vp.style.color='#8a6a00'; }
-  refreshIcons();
-  return html;
-}
-function agentApprove(){
-  const a=aStatus();
-  agentStage(5,'reviewing');
-  aLine('Approved by you · delivering','info');
-  setTimeout(()=>{
-    setAStatus({stage:6,status:'completed'});
-    renderAgent();
-    const box=document.getElementById('aConsole');
-    if(box){ const d=document.createElement('div'); d.className='mt-2 flex items-center gap-2 text-[12px]'; d.innerHTML=`${icon('badge-check','w-4 h-4','#30d158')} <b>Delivered.</b> Logged to Tasks and Runs.`; box.appendChild(d); }
-    const vp=document.getElementById('valPill'); if(vp){ vp.textContent='passed'; vp.style.background='rgba(48,209,88,.14)'; vp.style.color='#1d9b41'; }
-    refreshIcons();
-    S.runs.unshift({task:a.goal||'Agent task', ms:4200, at:new Date().toISOString(), engine:'Agent · approved'});
-    S.runs=S.runs.slice(0,40); save();
-    const rp=document.getElementById('runPill'); if(rp) rp.textContent=S.runs.length;
-    const a4=aStatus(); a4.log=[]; save();
-    toast('Delivered · approved');
-  }, 700);
+  if(!t) return;
+  const ta=document.getElementById('taskGoal'); if(ta) ta.value=t;
+  setTimeout(()=>agentAnalyze(),150);
 }
 let agentBusy=false;
 
@@ -2212,12 +2208,12 @@ function rTasks(){
   const runs=(S.runs||[]);
   const a=aStatus();
   const rows=[];
-  if(a.goal) rows.push({t:a.goal, st:(a.status==='completed'?'completed':a.status==='failed'?'failed':a.status==='preview'?'reviewing':'running'), at:'now'});
+  if(a.goal) rows.push({t:a.goal, st:(a.status==='completed'?'completed':a.status==='ready'?'reviewing':a.status==='analyzing'?'analyzing':a.status==='running'?'running':'pending'), at:'now'});
   runs.slice(0,12).forEach(r=>rows.push({t:r.task, st:'completed', at:new Date(r.at).toLocaleString()}));
   if(!rows.length) rows.push({t:'No tasks yet — start one from Agent', st:'pending', at:'—'});
   return sHead('📋 Tasks','Every execution with its live status.',
     `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="go('agent')">New task</button>`) +
-    `<div class="grid grid-cols-5 gap-1.5 mb-2.5">${['pending','running','reviewing','completed','failed'].map(st=>`
+    `<div class="grid grid-cols-5 gap-1.5 mb-2.5">${['pending','analyzing','running','completed','failed'].map(st=>`
       <div class="lg card" style="padding:8px 6px;text-align:center">
         <div class="text-[16px] font-semibold leading-none">${rows.filter(r=>r.st===st).length}</div>
         <div class="text-[9px] mt-1" style="color:${STATUS_COLORS[st]}">${st}</div></div>`).join('')}</div>` +
