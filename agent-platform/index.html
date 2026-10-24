@@ -106,8 +106,10 @@
   .navitem.active svg{ color:#0a84ff; }
   .navsec{ font-size:9.5px; font-weight:680; letter-spacing:.1em; text-transform:uppercase; color:#a0a0aa; padding:10px 11px 3px; }
   .navitem:active{ transform:scale(.985); }
-  .anim{ opacity:0; transform:translateY(8px); }
+  .anim.in, #settingsWrap .anim, #filesWrap .anim{ opacity:1; }
+  .anim{ opacity:1; transform:none; }
   .anim.in{ animation:pop .42s var(--ease) forwards; }
+  .anim{ animation:pop .42s var(--ease) forwards; }
   .anim.in:nth-child(2){ animation-delay:.04s } .anim.in:nth-child(3){ animation-delay:.08s }
   .anim.in:nth-child(4){ animation-delay:.12s } .anim.in:nth-child(5){ animation-delay:.16s }
   .anim.in:nth-child(6){ animation-delay:.2s } .anim.in:nth-child(n+7){ animation-delay:.24s }
@@ -123,7 +125,7 @@
   .seg button{ font-size:12.5px; font-weight:540; padding:6px 13px; border-radius:999px; color:#5b5b66; transition:.2s var(--ease); cursor:pointer; white-space:nowrap; }
   .seg button.on{ background:#fff; color:#0b0b0f; box-shadow:0 1px 3px rgba(0,0,0,.12); }
   .view{ flex:1; min-height:0; display:none; }
-  .view.on{ display:flex; flex-direction:column; animation:fade .35s var(--ease); }
+  .view.on{ display:flex; flex-direction:column; }
   @keyframes fade{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
 
   /* ── Hero / chat ── */
@@ -175,7 +177,7 @@
   #view-agent{ overflow:hidden; }
   #view-agent .agentsplit2{ flex-direction:row; }
   @media (max-width:1100px){
-    #view-agent{ display:flex; flex-direction:column; }
+    #view-agent.on{ display:flex; flex-direction:column; }
     #view-agent .agentsplit2{ flex-direction:column !important; padding:0; overflow-y:auto; flex:1 1 auto; min-height:0; }
     .agentmain{ flex:0 0 auto; min-height:auto; }
     .agentmain #ahero{ flex:0 0 auto; min-height:220px; padding-top:10px; }
@@ -183,6 +185,9 @@
     .apreview{ width:auto; flex:0 0 auto; max-height:none; margin:8px 2px 0; padding:11px; }
     #aPreview{ max-height:none; }
   }
+  .pvrow{ display:flex; flex-direction:column; gap:1px; padding:5px 0; border-bottom:.5px solid rgba(0,0,0,.06); }
+  .pvlabel{ font-size:9.5px; font-weight:650; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); }
+  .pvval{ font-size:11.5px; line-height:1.4; color:#3a3a44; word-break:break-word; }
   .edgehint{ display:none; position:fixed; z-index:46; left:0; top:50%; transform:translateY(-50%); width:5px; height:74px; border-radius:0 5px 5px 0; background:linear-gradient(#0a84ff,#bf5af2); opacity:.5; }
   .scrim{ position:fixed; inset:0; background:rgba(12,12,24,.30); -webkit-backdrop-filter:none; backdrop-filter:none; z-index:40; display:none; }
   /* ── Mode switch ── */
@@ -403,33 +408,7 @@
 
       <div class="h-px mx-2 mb-3 hide-c" style="background:rgba(0,0,0,.06)"></div>
 
-      <!-- SKILLS MINI LIST (in sidebar as requested) -->
-      <div class="hide-c">
-        <div class="flex items-center justify-between px-2 mb-1.5">
-          <span class="text-[10.5px] font-semibold tracking-[.08em] uppercase text-[var(--muted)]">Active skills</span>
-          <button class="text-[10.5px] text-[#0a84ff] font-medium hover:underline" data-view="skills">Manage</button>
-        </div>
-        <div id="sideSkills" class="flex flex-col gap-0.5 mb-3"></div>
-      </div>
-
-      <div class="hide-c">
-        <div class="flex items-center justify-between px-2 mb-1.5">
-          <span class="text-[10.5px] font-semibold tracking-[.08em] uppercase text-[var(--muted)]">Brain</span>
-          <span class="text-[10.5px] text-[var(--muted)]" id="brainMemCount">0 memories</span>
-        </div>
-        <div class="rounded-xl p-2.5 mb-3" style="background:rgba(191,90,242,.07);box-shadow:inset 0 0 0 .5px rgba(191,90,242,.16)">
-          <div class="flex items-center gap-2 mb-1"><i data-lucide="cpu" class="w-3.5 h-3.5" style="color:#bf5af2"></i><span class="text-[11.5px] font-semibold" id="sideModel">Reasoning</span></div>
-          <button class="w-full text-left text-[10.5px] text-[#0a84ff] font-medium mt-1.5" onclick="openKnowledge()">Built-in knowledge →</button>
-          <div class="flex items-center gap-2">
-            <div class="bar flex-1"><i id="sideCtx" style="width:12%"></i></div>
-            <span class="text-[10px] text-[var(--muted)]" id="sideCtxPct">12%</span>
-          </div>
-        </div>
-      </div>
-
       <div class="hide-c flex flex-col gap-0">
-        <div class="navitem" data-view="files"><i data-lucide="folder"></i><span class="hide-c">Files</span></div>
-        <div class="navitem" data-view="settings"><i data-lucide="settings"></i><span class="hide-c">Settings</span></div>
         <div class="navitem" onclick="lockSite()"><i data-lucide="lock"></i><span class="hide-c">Lock</span></div>
       </div>
     </div>
@@ -482,7 +461,6 @@
       </div>
     </section>
 
-
     <!-- ══════════ VIEW: AGENT (independent execution console) ══════════ -->
     <section class="view" id="view-agent">
       <div class="agentsplit2">
@@ -513,13 +491,29 @@
         </div>
 
         <aside class="apreview" id="aPreviewPanel">
-          <div class="flex items-center justify-between px-0.5 mb-2">
+          <div class="flex items-center justify-between px-0.5 mb-2.5">
             <div class="flex items-center gap-1.5"><span class="live-dot"></span>
               <span class="text-[12px] font-semibold">Live preview</span></div>
             <span class="pill" id="apvState" style="background:rgba(0,0,0,.05);color:#8a8a94">idle</span>
           </div>
-          <div class="scrollarea flex-1 min-h-0 pr-0.5" id="aPreview"></div>
-          <div id="aApproveWrap" class="hidden pt-2">
+
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10.5px] text-[var(--muted)]">Progress</span>
+            <span class="text-[10.5px] font-semibold" id="apvPct">0%</span>
+          </div>
+          <div class="bar mb-3"><i id="apvBar" style="width:0%"></i></div>
+
+          <div class="pvrow"><span class="pvlabel">Thinking</span><div id="apvThink" class="pvval">—</div></div>
+          <div class="pvrow"><span class="pvlabel">Current action</span><div id="apvAction" class="pvval">—</div></div>
+          <div class="pvrow"><span class="pvlabel">Browser</span><div id="apvBrowser" class="pvval">idle</div></div>
+
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mt-3 mb-1.5">Generated files</div>
+          <div id="apvFiles" class="flex flex-col gap-1"><div class="text-[11px] text-[var(--muted)]">None yet</div></div>
+
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mt-2.5 mb-1.5">Result</div>
+          <div id="apvResult" class="text-[11.5px] text-[var(--muted)] leading-snug">Waiting for a task.</div>
+
+          <div id="aApproveWrap" class="hidden pt-2.5">
             <button class="btn-primary w-full py-2.5 text-[12.5px] font-medium press inline-flex items-center justify-center gap-1.5" onclick="agentApprove()">
               <i data-lucide="badge-check" class="w-3.5 h-3.5"></i> Approve &amp; run
             </button>
@@ -528,241 +522,9 @@
       </div>
     </section>
 
-    <!-- ══════════ VIEW: BUILDER ══════════ -->
-    <section class="view" id="view-builder">
-      <div class="scrollarea flex-1 px-1">
-        <div class="max-w-5xl mx-auto py-4">
-          <div class="lg card mb-3" style="border-radius:24px">
-            <div class="flex items-start justify-between flex-wrap gap-3">
-              <div>
-                <div class="flex items-center gap-2 mb-1"><i data-lucide="wand-sparkles" class="w-4 h-4" style="color:#bf5af2"></i><span class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">Agent builder</span></div>
-                <h2 class="text-[22px] font-semibold tracking-tight leading-tight">Design your agent</h2>
-                <p class="text-[12.5px] text-[var(--muted)] mt-1">Identity, runtime, instructions, skills and brain — saved instantly. <span id="engineState" class="font-medium" style="color:#0a84ff">Cloud · model powered</span></p>
-              </div>
-              <div class="flex gap-2">
-                <button class="btn-glass px-3.5 py-2 text-[12.5px] font-medium press flex items-center gap-1.5" onclick="resetAgent()"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Reset</button>
-                <button class="btn-primary px-4 py-2 text-[12.5px] font-medium press flex items-center gap-1.5" onclick="openShare()"><i data-lucide="rocket" class="w-3.5 h-3.5"></i>Publish agent</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="gridc md:grid-cols-2 mb-3">
-            <div class="lg card lift">
-              <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-3">Identity</div>
-              <label class="text-[11.5px] font-medium text-[#3a3a44]">Name</label>
-              <input id="bName" class="w-full mt-1 mb-3 px-3 py-2 rounded-xl text-[13.5px] bg-white/80 outline-none" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)" oninput="setName(this.value)">
-              <label class="text-[11.5px] font-medium text-[#3a3a44]">Role</label>
-              <input id="bRole" class="w-full mt-1 mb-3 px-3 py-2 rounded-xl text-[13.5px] bg-white/80 outline-none" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)" oninput="setRole(this.value)">
-              <label class="text-[11.5px] font-medium text-[#3a3a44]">Avatar</label>
-              <div class="flex gap-1.5 mt-1 flex-wrap" id="emojiRow"></div>
-            </div>
-            <div class="lg card lift">
-              <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-3">Brain engine</div>
-              <div class="flex flex-col gap-2" id="engineRow"></div>
-              <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)] mt-4 mb-2">Runtime</div>
-              <div class="grid grid-cols-2 gap-2" id="runtimeRow"></div>
-            </div>
-          </div>
-
-          <div class="lg card mb-3">
-            <div class="flex items-center justify-between mb-2">
-              <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">System instructions</div>
-              <span class="text-[10.5px] text-[var(--muted)]"><span id="instrLen">0</span> chars</span>
-            </div>
-            <textarea id="bInstr" rows="6" class="w-full px-3.5 py-3 rounded-2xl text-[13px] leading-relaxed bg-white/80 outline-none scrollarea" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.1);resize:vertical" oninput="setInstr(this.value)"></textarea>
-            <div class="flex flex-wrap gap-1.5 mt-2">
-              <button class="chip btn-glass" onclick="presetInstr('assistant')">Executive assistant</button>
-              <button class="chip btn-glass" onclick="presetInstr('research')">Researcher</button>
-              <button class="chip btn-glass" onclick="presetInstr('code')">Engineer</button>
-              <button class="chip btn-glass" onclick="presetInstr('sales')">SDR / sales</button>
-            </div>
-          </div>
-
-          <div class="lg card mb-4">
-            <div class="flex items-center justify-between mb-3">
-              <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">Skills assigned</div>
-              <button class="text-[11.5px] font-medium" style="color:#0a84ff" data-view="skills">Open skill library →</button>
-            </div>
-            <div class="gridc sm:grid-cols-2 lg:grid-cols-3" id="builderSkills"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════ VIEW: SKILLS ══════════ -->
-    <section class="view" id="view-skills">
-      <div class="scrollarea flex-1 px-1">
-        <div class="max-w-5xl mx-auto py-4">
-          <div class="flex items-end justify-between flex-wrap gap-3 mb-4">
-            <div>
-              <h2 class="text-[22px] font-semibold tracking-tight">Skill library</h2>
-              <p class="text-[12.5px] text-[var(--muted)] mt-0.5">Toggle a skill to teach your agent a new ability. Changes apply on the next run.</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="inputwrap lg flex items-center gap-2 px-3 py-2 rounded-full">
-                <i data-lucide="search" class="w-3.5 h-3.5 text-[var(--muted)]"></i>
-                <input id="skillSearch" placeholder="Search skills" class="bg-transparent outline-none text-[12.5px] w-36" oninput="renderSkills()">
-              </div>
-              <button class="btn-primary px-3.5 py-2 text-[12.5px] font-medium press" onclick="newSkill()">+ New skill</button>
-            </div>
-          </div>
-          <div class="gridc sm:grid-cols-2 lg:grid-cols-3" id="skillGrid"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════ VIEW: BRAIN ══════════ -->
-    <section class="view" id="view-brain">
-      <div class="scrollarea flex-1 px-1">
-        <div class="max-w-5xl mx-auto py-4">
-          <h2 class="text-[22px] font-semibold tracking-tight mb-1">Brain &amp; memory</h2>
-          <p class="text-[12.5px] text-[var(--muted)] mb-4">The brain holds what your agent knows: its instructions, long-term memory and context budget.</p>
-          <div class="gridc lg:grid-cols-3 mb-3">
-            <div class="lg card lift">
-              <div class="flex items-center gap-2 mb-2"><i data-lucide="cpu" class="w-4 h-4" style="color:#0a84ff"></i><span class="text-[12px] font-semibold">Engine</span></div>
-              <div class="text-[18px] font-semibold tracking-tight" id="brainEngine">Reasoning</div>
-              <div class="text-[11px] text-[var(--muted)] mt-0.5" id="brainEngineSub">chain-of-thought · tools</div>
-              <div class="bar mt-3"><i id="brainCtxBar" style="width:12%"></i></div>
-              <div class="text-[10.5px] text-[var(--muted)] mt-1.5">Context used · <span id="brainCtxTxt">12%</span> of 128k</div>
-            </div>
-            <div class="lg card lift">
-              <div class="flex items-center gap-2 mb-2"><i data-lucide="database" class="w-4 h-4" style="color:#bf5af2"></i><span class="text-[12px] font-semibold">Memory</span></div>
-              <div class="text-[18px] font-semibold tracking-tight"><span id="memBig">0</span> facts</div>
-              <div class="text-[11px] text-[var(--muted)] mt-0.5">stored in this browser</div>
-              <button class="btn-glass w-full mt-3 py-1.5 text-[11.5px] font-medium press" onclick="openMem()">Add memory</button>
-            </div>
-            <div class="lg card lift">
-              <div class="flex items-center gap-2 mb-2"><i data-lucide="graduation-cap" class="w-4 h-4" style="color:#30d158"></i><span class="text-[12px] font-semibold">Training level</span></div>
-              <div class="text-[18px] font-semibold tracking-tight" id="lvlBig">Level 3</div>
-              <div class="text-[11px] text-[var(--muted)] mt-0.5" id="lvlSub">6 skills · 0 memories</div>
-              <div class="bar mt-3"><i id="lvlBar2" style="width:42%"></i></div>
-            </div>
-          </div>
-          <div class="lg card">
-            <div class="flex items-center justify-between mb-3">
-              <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">What it remembers</div>
-              <span class="text-[10.5px] text-[var(--muted)]">Used automatically in every reply</span>
-            </div>
-            <div id="memList" class="flex flex-col gap-1.5"></div>
-          </div>
-
-          <div class="flex items-center justify-between mt-5 mb-2 px-1">
-            <div class="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">Built-in AI knowledge</div>
-            <span class="text-[10.5px] text-[#30d158] font-medium" id="kbTotal">27 playbooks ready</span>
-          </div>
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2" id="knowledgeGrid"></div>
-          <button class="btn-glass w-full mt-2 py-2 text-[12px] font-medium press" onclick="openKnowledge()">View knowledge base</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════ VIEW: TOOLS ══════════ -->
-    <section class="view" id="view-tools">
-      <div class="scrollarea flex-1 px-1">
-        <div class="max-w-5xl mx-auto py-4">
-          <h2 class="text-[22px] font-semibold tracking-tight mb-1">Tools &amp; access</h2>
-          <p class="text-[12.5px] text-[var(--muted)] mb-4">What the agent can actually do in the world. API keys stay in your browser.</p>
-          <div class="gridc md:grid-cols-2" id="toolGrid"></div>
-          <div class="lg card mt-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="iconbox" style="background:rgba(0,0,0,.05)"><i data-lucide="key-round" class="w-4 h-4"></i></div>
-                <div>
-                  <div class="text-[13px] font-semibold">Model API key</div>
-                  <div class="text-[11px] text-[var(--muted)]" id="keyState">Not connected — replies are simulated</div>
-                </div>
-              </div>
-              <button class="btn-glass px-3.5 py-1.5 text-[12px] font-medium press" onclick="openKey()">Configure</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════ VIEW: RUNS ══════════ -->
-    <section class="view" id="view-runs">
-      <div class="scrollarea flex-1 px-1">
-        <div class="max-w-4xl mx-auto py-4">
-          <div class="flex items-end justify-between mb-4">
-            <div>
-              <h2 class="text-[22px] font-semibold tracking-tight">Runs log</h2>
-              <p class="text-[12.5px] text-[var(--muted)] mt-0.5">Every task your agent executes, newest first.</p>
-            </div>
-            <button class="btn-glass px-3 py-1.5 text-[12px] font-medium press" onclick="clearRuns()">Clear</button>
-          </div>
-          <div id="runList" class="flex flex-col gap-2"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════ VIEW: CLOUD BROWSER ══════════ -->
-    <section class="view" id="view-browser">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="browserWrap"></div></div>
-    </section>
-
     <!-- ══════════ VIEW: FILES ══════════ -->
     <section class="view" id="view-files">
       <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="filesWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: DOCUMENTS ══════════ -->
-    <section class="view" id="view-documents">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="docsWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: REPORTS ══════════ -->
-    <section class="view" id="view-reports">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="reportsWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: ANALYTICS ══════════ -->
-    <section class="view" id="view-analytics">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="analyticsWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: EMAIL ══════════ -->
-    <section class="view" id="view-email">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-4xl mx-auto py-4" id="emailWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: SOCIAL ══════════ -->
-    <section class="view" id="view-social">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="socialWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: CRM ══════════ -->
-    <section class="view" id="view-crm">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="crmWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: WORKFLOWS ══════════ -->
-    <section class="view" id="view-workflows">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="workflowsWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: TASKS ══════════ -->
-    <section class="view" id="view-tasks">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-4xl mx-auto py-4" id="tasksWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: RESEARCH ══════════ -->
-    <section class="view" id="view-research">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-4xl mx-auto py-4" id="researchWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: PDF CENTER ══════════ -->
-    <section class="view" id="view-pdf">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-4xl mx-auto py-4" id="pdfWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: CONTENT STUDIO ══════════ -->
-    <section class="view" id="view-studio">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="studioWrap"></div></div>
-    </section>
-
-    <!-- ══════════ VIEW: BUSINESS HUB ══════════ -->
-    <section class="view" id="view-business">
-      <div class="scrollarea flex-1 px-1"><div class="max-w-5xl mx-auto py-4" id="businessWrap"></div></div>
     </section>
 
     <!-- ══════════ VIEW: SETTINGS ══════════ -->
@@ -773,7 +535,6 @@
 </div>
 
 <!-- Mobile bottom dock -->
-
 
 <!-- ══════════ MODALS ══════════ -->
 <div id="modalWrap" class="fixed inset-0 z-[60] hidden items-center justify-center p-4" style="background:rgba(15,15,25,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)">
@@ -790,7 +551,6 @@
 <div id="toast" class="fixed left-1/2 z-[80] max-w-[92vw] px-4 py-2.5 rounded-full text-[12.5px] font-medium opacity-0 pointer-events-none transition-all duration-300 lg lg-strong" style="transform:translate(-50%,14px)"></div>
 
 <script>
-
 
 /* ═══════════ PWA INSTALL ═══════════ */
 let deferredPrompt=null;
@@ -910,20 +670,14 @@ const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 function icon(name,cls='w-4 h-4',color=''){ return `<i data-lucide="${name}" class="${cls}" ${color?`style="color:${color}"`:''}></i>`; }
 function refreshIcons(){ try{ lucide.createIcons(); }catch(e){} }
 
-
 /* ═══════════ NAV & APP SECTIONS ═══════════ */
 const stripEmoji = t => t.replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]\s*/u,'');
 const NAV = [
   {id:'dashboard',label:'Dashboard',short:'Home',icon:'layout-dashboard'},
-  {g:'Workspace'},
-  {id:'chat',  label:'Chat',        short:'Chat',     icon:'message-circle', view:true},
-  {id:'agent', label:'Agent',       short:'Agent',    icon:'bot', view:true, pill:['live','#8b3fd0']},
-  {id:'files', label:'Files',       short:'Files',    icon:'folder'},
-  {id:'documents',label:'Documents',short:'Docs',     icon:'file-text'},
-  {id:'tasks', label:'Tasks',       short:'Tasks',    icon:'list-checks', pill:['0','#0a84ff','taskPill']},
-  {id:'reports',label:'Reports',    short:'Reports',  icon:'bar-chart-3'},
-  {id:'social',label:'Social Media',short:'Social',   icon:'megaphone'},
-  {id:'settings',label:'Settings',  short:'Settings', icon:'settings'}
+  {id:'chat',  label:'Chat',    short:'Chat',     icon:'message-circle', view:true},
+  {id:'agent', label:'Agent',   short:'Agent',    icon:'bot', view:true},
+  {id:'files', label:'Files',   short:'Files',    icon:'folder'},
+  {id:'settings',label:'Settings',short:'Settings',icon:'settings'}
 ];
 function renderNav(){
   const el=document.getElementById('navList'); if(!el) return;
@@ -962,13 +716,7 @@ function go(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.toggle('on', el.id==='view-'+v));
   const NAVALIAS={}; document.querySelectorAll('.navitem[data-view]').forEach(el=>el.classList.toggle('active', el.dataset.view===(NAVALIAS[v]||v)));
   if(v==='agent') renderAgent();
-  if(v==='skills') renderSkills();
-  if(v==='brain'){ renderBrain(); renderKnowledgeBoard(); }
   if(v==='dashboard') renderDash();
-  if(v==='builder') renderBuilder();
-  if(v==='runs') renderRuns();
-  if(v==='tools') { renderTools(); }
-  if(v==='brain') renderKnowledgeBoard();
   if(SECTIONS[v]) renderSection(v);
 
   const ms=document.querySelector("main.stage"); if(ms) ms.style.paddingBottom=(v==="agent"&&window.innerWidth<=900)?"124px":"";
@@ -1047,31 +795,13 @@ function toast(msg){
 
 /* ═══════════ RENDER: sidebar skills + brain ═══════════ */
 function renderSideSkills(){
-  const guard=document.getElementById('navList'); if(!guard) return;
   const on = SKILLS.filter((s,i)=>S.skills[i]);
-  const sc=$('#skillCount'); if(sc) sc.textContent = on.length;
-  const ss=$('#sideSkills'); if(ss) ss.innerHTML = on.slice(0,5).map(s=>`
-    <div class="skillrow" onclick="go('skills')">
-      <span class="dot" style="background:${s.color}"></span>
-      <span class="truncate flex-1">${esc(s.name)}</span>
-      ${icon(s.icon,'w-3.5 h-3.5','#9a9aa6')}
-    </div>`).join('') || `<div class="text-[11px] text-[var(--muted)] px-2 py-1">No skills enabled</div>`;
   const lvl = Math.min(9, 1 + Math.floor(on.length/2) + Math.floor(S.mem.length/2));
   const pct = Math.min(100, 18 + on.length*9 + S.mem.length*4);
   const lv = document.getElementById('lvlPill'); if(lv) lv.textContent = 'Lv. '+lvl;
   const lb = document.getElementById('lvlBar'); if(lb) lb.style.width = pct+'%';
-  const l2 = document.getElementById('lvlBar2'); if(l2){ l2.style.width = pct+'%'; }
-  const lbig = document.getElementById('lvlBig'); if(lbig) lbig.textContent='Level '+lvl;
-  const lsub = document.getElementById('lvlSub'); if(lsub) lsub.textContent = on.length+' skills · '+S.mem.length+' memories';
-  const bmc=$('#brainMemCount'); if(bmc) bmc.textContent = S.mem.length + (S.mem.length===1?' memory':' memories');
-  const sm=$('#sideModel'); if(sm) sm.textContent = S.engine;
-  const ctx = Math.min(96, 8 + S.mem.length*3 + on.length*2);
-  const sx=$('#sideCtx'); if(sx) sx.style.width = ctx+'%';
-  const sp=$('#sideCtxPct'); if(sp) sp.textContent = ctx+'%';
   refreshIcons();
 }
-
-
 
 /* ═══════════ MODEL PROVIDERS ═══════════ */
 function providerOf(){
@@ -1158,7 +888,7 @@ function setMode(m){
   const l=document.getElementById('modeLbl'); if(l) l.textContent=m2.label;
   const st=document.getElementById('statusTxt'); if(st) st.textContent=m2.status;
   const es=document.getElementById('engineState'); if(es) es.textContent=m2.sub;
-  renderBuilder(); renderTools(); syncIdentity();
+  syncIdentity();
 }
 function toggleMode(){ setMode(S.mode==='local'?'cloud':'local'); toast(S.mode==='local'?'Local mode — stays on your device':'Cloud mode — full model power'); }
 function openMode(){
@@ -1178,8 +908,6 @@ function openMode(){
     <p class="text-[11px] text-[var(--muted)] mt-3">Local mode runs the built-in planner and writer inside this page — no network calls at all.</p>`,
     [{label:'Close',fn:closeModal}]);
 }
-
-
 
 /* ═══════════ CHAT ═══════════ */
 function syncIdentity(){
@@ -1218,7 +946,7 @@ const SUGGEST = {
 function useSuggestion(id){ $('#prompt').value = SUGGEST[id] || 'Help me with my next task'; $('#prompt').focus(); }
 function cycleModel(){
   const i = ENGINES.findIndex(e=>e.id===S.engine);
-  S.engine = ENGINES[(i+1)%ENGINES.length].id; save(); syncIdentity(); renderSideSkills(); renderBrain(); toast('Model: '+S.engine);
+  S.engine = ENGINES[(i+1)%ENGINES.length].id; save(); syncIdentity(); renderSideSkills(); toast('Model: '+S.engine);
 }
 $('#agentNameSide').addEventListener('input', e=>{ S.name=e.target.value||'Agent'; save(); syncIdentity(); });
 
@@ -1411,9 +1139,8 @@ function localReply(text){ return structuredAnswer(text, false); }
 function addRun(task, ms){
   S.runs.unshift({ task, ms, at:new Date().toISOString(), engine:S.engine });
   S.runs = S.runs.slice(0,30); save();
-  $('#runPill').textContent = S.runs.length; renderRuns();
+  const _rp=$('#runPill'); if(_rp) _rp.textContent = S.runs.length;
 }
-
 
 /* ═══════════ AI AGENT: tasks + real-time preview ═══════════ */
 const TASK_TEMPLATES = [
@@ -1527,14 +1254,14 @@ async function startTask(){
       finalNote = `<div class="mt-2 p-2.5 rounded-[10px]" style="background:rgba(10,132,255,.06);box-shadow:inset 0 0 0 .5px rgba(10,132,255,.18)"><div class="mini-h" style="color:#0a6bd0">Gemini result</div><div class="text-[11.5px] leading-relaxed">${fmt(out)}</div></div>`;
       S.mem.unshift('Task done: '+goal.slice(0,70));
       if(S.mem.length>12) S.mem.length=12;
-      save(); renderBrain(); renderSideSkills();
+      save(); renderSideSkills();
     }catch(e){ finalNote = `<div class="mt-2 text-[11px]" style="color:#ff375f">Gemini: ${esc(String(e.message).slice(0,120))}</div>`; }
   }
   renderPreview(type, steps.length, goal, steps.length, true, finalNote);
   const ms=Date.now()-t0;
   S.runs.unshift({ task:goal, ms, at:new Date().toISOString(), engine:(S.mode==='local'?'Local':'Cloud')+' · '+type });
   S.runs=S.runs.slice(0,30); save();
-  document.getElementById('runPill').textContent=S.runs.length; renderRuns();
+  const _rp2=document.getElementById('runPill'); if(_rp2) _rp2.textContent=S.runs.length;
   toast('Task complete · '+steps.length+' steps');
 }
 function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
@@ -1591,9 +1318,6 @@ function openFull(){
   modal('Live preview', `<div class="preview-doc">${html}</div>`, [{label:'Close',fn:closeModal},{label:'Copy',fn:()=>{navigator.clipboard?.writeText(document.getElementById('previewBody')?.innerText||'');toast('Copied')}}]);
 }
 
-
-
-
 /* ═══════════ REAL UTILITIES ═══════════ */
 function voiceInput(targetId){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -1603,17 +1327,6 @@ function voiceInput(targetId){
   r.onresult=e=>{ const t=e.results[0][0].transcript; if(inp){ inp.value=(inp.value?inp.value+' ':'')+t; inp.focus(); } };
   r.onerror=()=>toast('Voice input cancelled');
   r.start(); toast('Listening…');
-}
-function newSkill(){
-  modal('New skill', `<input id="nsk" placeholder="Skill name, e.g. Taxes & compliance" class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px] mb-2" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)">
-    <textarea id="nskd" rows="2" placeholder="What it should do" class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px]" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)"></textarea>`,
-    [{label:'Cancel',fn:closeModal},{label:'Add skill',cls:'btn-primary',fn:()=>{
-      const n=($('#nsk')?.value||'').trim(); if(!n){ toast('Name it first'); return; }
-      SKILLS.push({id:'custom'+SKILLS.length, name:n, icon:'sparkles', color:'#bf5af2', desc:($('#nskd')?.value||'Custom skill').trim(), on:true});
-      S.skills.push(true); save(); S.skillDefs=SKILLS.map(x=>({id:x.id,name:x.name,icon:x.icon,color:x.color,desc:x.desc})); save();
-      closeModal(); renderSkills(); renderSideSkills(); toast(n+' added');
-    }}]);
-  setTimeout(()=>$('#nsk')?.focus(),120);
 }
 
 /* ═══════════ CONNECTED ACCOUNTS & KNOWLEDGE ═══════════ */
@@ -1672,7 +1385,7 @@ function connectNow(id){
     setTimeout(()=>toast(c.name+' sync complete'),1200);
     return;
   }
-  if(id==='browser'){ go('browser'); setTimeout(()=>openBrowserKey(),300); return; }
+  if(id==='browser'){ openBrowserKey(); return; }
   if(id==='custom'){ openCustomApi(); return; }
 }
 function openBrowserKey(){
@@ -1714,7 +1427,7 @@ function openKnowledge(){
       <span class="pill" style="background:rgba(48,209,88,.12);color:#1d9b41">${k.entries}</span>
     </div>`).join('')}</div>
     <div class="text-[10.5px] text-[var(--muted)] mt-3">Add your own facts in Brain &amp; memory — they are attached to every reply.</div>`,
-    [{label:'Open brain',fn:()=>{closeModal();go('brain');}},{label:'Done',cls:'btn-primary',fn:closeModal}]);
+    [{label:'Done',cls:'btn-primary',fn:closeModal}]);
   refreshIcons();
 }
 function autoConnectSweep(){
@@ -1723,144 +1436,18 @@ function autoConnectSweep(){
   setTimeout(()=>{ CONNECTORS.forEach((c,i)=>setTimeout(()=>{ renderConnectors(); }, 90*i+90)); }, 500);
 }
 
-
-function renderKnowledgeBoard(){
-  const el=document.getElementById('knowledgeGrid'); if(!el) return;
-  const total=KNOWLEDGE.reduce((a,k)=>a+k.entries,0);
-  el.innerHTML = KNOWLEDGE.map(k=>`<div class="lg card lift anim in" style="padding:13px">
-    <div class="flex items-center justify-between mb-2"><span class="iconbox" style="background:${k.c}1a">${icon(k.i,'w-4 h-4',k.c)}</span>
-    <span class="pill" style="background:rgba(48,209,88,.12);color:#1d9b41">ready</span></div>
-    <div class="text-[12.5px] font-semibold">${esc(k.n)}</div>
-    <div class="text-[11px] text-[var(--muted)] leading-snug mt-0.5">${esc(k.d)}</div></div>`).join('');
-  const t=document.getElementById('kbTotal'); if(t) t.textContent=total+' playbooks ready';
-  refreshIcons();
-}
-
-
 /* ═══════════ DASHBOARD ═══════════ */
 const DASH_QUICK = [
   {t:'Ask Nova a question', d:'Chat mode · instant advice', i:'message-circle', c:'#0a84ff', act:"go('chat')"},
   {t:'Run an agent task', d:'Plan, preview, approve, deliver', i:'bot', c:'#bf5af2', act:"go('agent')"},
   {t:'Research a market', d:'Sources, dates, comparison', i:'search', c:'#5e5ce6', act:"go('research')"},
-  {t:'Draft a document', d:'Proposal, SOP, cover letter', i:'file-text', c:'#ff9f0a', act:"go('documents')"}
+  {t:'Draft a document', d:'Proposal, SOP, cover letter', i:'file-text', c:'#ff9f0a', act:"go('files')"}
 ];
 const STATUS_COLORS = {pending:'#8a8a94', analyzing:'#0a84ff', ready:'#ff9f0a', reviewing:'#ff9f0a', running:'#0a84ff', completed:'#30d158', failed:'#ff375f'};
 function statusPill(st){
   const c=STATUS_COLORS[st]||'#8a8a94';
   return `<span class="pill" style="background:${c}1f;color:${c}"><span class="w-1.5 h-1.5 rounded-full inline-block mr-1" style="background:${c}"></span>${st}</span>`;
 }
-function renderDash(){
-  const el=document.getElementById('dashWrap'); if(!el) return;
-  const st=store();
-  const runs=(S.runs||[]);
-  const a=aStatus();
-  const openTasks = (a.goal && a.status!=='completed' ? 1 : 0);
-  const cards = [
-    {t:'Tasks',        v:runs.length+openTasks, s:openTasks?openTasks+' in progress':'all clear', c:'#0a84ff', i:'list-checks', go:'tasks'},
-    {t:'Agent Runs',   v:runs.length,            s:runs.length? 'latest '+(runs[0]?new Date(runs[0].at).toLocaleDateString():'—'):'none yet', c:'#bf5af2', i:'bot', go:'agent'},
-    {t:'Files',        v:st.files.length,        s:st.files.length?'ready to download':'empty', c:'#ff9f0a', i:'folder', go:'files'},
-    {t:'Documents',    v:st.docs.length,         s:st.docs.length?'saved drafts':'empty', c:'#32ade6', i:'file-text', go:'documents'},
-    {t:'Reports',      v:st.reports.length,      s:st.reports.length?'generated':'empty', c:'#30d158', i:'bar-chart-3', go:'reports'},
-    {t:'Social Media', v:st.social.length,       s:st.social.length?'posts queued':'queue empty', c:'#ff375f', i:'megaphone', go:'social'}
-  ];
-  const hour=new Date().getHours();
-  const hi = hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
-  const bars=weekBars(); const max=Math.max(1,...bars.map(b=>b.v));
-
-  el.innerHTML = `
-    <div class="flex items-end justify-between gap-3 mb-5 anim" style="flex-wrap:nowrap">
-      <div class="min-w-0">
-        <h1 class="text-[27px] sm:text-[32px] font-semibold tracking-tight leading-tight">${hi}</h1>
-        <p class="text-[12.5px] text-[var(--muted)] mt-1 truncate">${S.company||'VisaHOBe'} · ${S.mode==='local'?'Local engine':'Cloud engine'}</p>
-      </div>
-      <button class="btn-primary px-4 py-2.5 text-[12.5px] font-medium press shrink-0 whitespace-nowrap" onclick="go('agent')">New task</button>
-    </div>
-
-    <div class="grid grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-2.5 mb-5">
-      ${cards.map((c,i)=>`
-        <button class="dashcard lg card lift anim press text-left" style="padding:15px;animation-delay:${i*40}ms" onclick="go('${c.go}')">
-          <div class="flex items-start justify-between mb-3">
-            <span class="w-9 h-9 rounded-xl grid place-items-center" style="background:${c.c}16">${icon(c.i,'w-4 h-4',c.c)}</span>
-            ${icon('arrow-up-right','w-3.5 h-3.5','#c3c3cc')}
-          </div>
-          <div class="text-[24px] font-semibold tracking-tight leading-none">${c.v}</div>
-          <div class="text-[12px] font-medium mt-1.5">${c.t}</div>
-          <div class="text-[10.5px] text-[var(--muted)] mt-0.5">${c.s}</div>
-        </button>`).join('')}
-    </div>
-
-    <div class="grid lg:grid-cols-3 gap-2.5">
-      <div class="lg:col-span-2 flex flex-col gap-2.5">
-        <div class="lg card anim in" style="padding:15px">
-          <div class="flex items-center justify-between mb-2.5">
-            <div class="text-[13px] font-semibold">Start here</div>
-            <span class="text-[10.5px] text-[var(--muted)]">Chat and Agent are separate</span>
-          </div>
-          <div class="grid sm:grid-cols-2 gap-2">
-            <button class="text-left px-3.5 py-3 rounded-xl press" style="background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="go('chat')">
-              <div class="flex items-center gap-2 mb-1"><span class="w-6 h-6 rounded-lg grid place-items-center" style="background:rgba(10,132,255,.12)">${icon('message-circle','w-3.5 h-3.5','#0a84ff')}</span>
-              <span class="text-[12.5px] font-semibold">Chat with Nova</span></div>
-              <span class="text-[11px] text-[var(--muted)]">Fast answers, no execution</span>
-            </button>
-            <button class="text-left px-3.5 py-3 rounded-xl press" style="background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="go('agent')">
-              <div class="flex items-center gap-2 mb-1"><span class="w-6 h-6 rounded-lg grid place-items-center" style="background:rgba(191,90,242,.12)">${icon('bot','w-3.5 h-3.5','#bf5af2')}</span>
-              <span class="text-[12.5px] font-semibold">Run a task</span></div>
-              <span class="text-[11px] text-[var(--muted)]">Analyze, preview, approve, execute</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="lg card anim in" style="padding:15px">
-          <div class="flex items-center justify-between mb-2">
-            <div class="text-[13px] font-semibold">Recent runs</div>
-            <button class="text-[11px] font-medium" style="color:#0a84ff" onclick="go('tasks')">All →</button>
-          </div>
-          ${runs.length ? runs.slice(0,4).map(r=>`<div class="flex items-center gap-2.5 py-1.5">
-            <span class="w-6 h-6 rounded-lg grid place-items-center shrink-0" style="background:rgba(48,209,88,.12)">${icon('check','w-3 h-3','#1d9b41')}</span>
-            <div class="flex-1 min-w-0"><div class="text-[12px] font-medium truncate">${esc(r.task)}</div>
-            <div class="text-[10.5px] text-[var(--muted)]">${new Date(r.at).toLocaleString()} · ${(r.ms/1000).toFixed(1)}s</div></div>
-            <span class="pill" style="background:rgba(48,209,88,.14);color:#1d9b41">done</span></div>`).join('')
-          : '<div class="text-[12px] text-[var(--muted)] py-2">No runs yet — start one from Agent.</div>'}
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-2.5">
-        <div class="lg card anim in" style="padding:15px">
-          <div class="flex items-center justify-between mb-2">
-            <div class="text-[13px] font-semibold">Activity · 7 days</div>
-            <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">${bars.reduce((x,y)=>x+y.v,0)}</span>
-          </div>
-          <div class="flex items-end gap-1.5" style="height:86px">
-            ${bars.map(b=>`<div class="flex-1 flex flex-col items-center gap-1 h-full">
-              <div class="grow w-full flex items-end"><div class="growbar w-full rounded-t-md" data-h="${Math.round(b.v/max*100)||2}" style="height:4%;background:linear-gradient(180deg,#5ac8fa,#0a84ff)"></div></div>
-              <span class="text-[9px] text-[var(--muted)]">${b.l[0]}</span></div>`).join('')}
-          </div>
-        </div>
-        <div class="lg card anim in" style="padding:15px">
-          <div class="text-[13px] font-semibold mb-2">Install the app</div>
-          <div class="text-[11px] text-[var(--muted)] mb-2.5">Own icon, full screen, offline.</div>
-          <button class="btn-glass w-full py-2 text-[12px] font-medium press" onclick="installApp()">Install</button>
-        </div>
-        <div class="lg card anim in" style="padding:15px">
-          <div class="text-[13px] font-semibold mb-2">Execution stack</div>
-          <div class="flex flex-wrap gap-1.5">${AGENT_MODULES.map(m=>`<span class="pill" style="background:rgba(10,132,255,.09);color:#0a6bd0">${m}</span>`).join('')}</div>
-          <div class="text-[11px] text-[var(--muted)] mt-2.5">${S.bbKey?'Browser Use connected':'Add a Browser Use key for real sessions'}</div>
-        </div>
-      </div>
-    </div>`;
-  refreshIcons();
-  el.querySelectorAll('.anim').forEach(n=>n.classList.add('in'));
-  el.querySelectorAll('.growbar').forEach((b,i)=>setTimeout(()=>{ b.style.transition='height .7s cubic-bezier(.2,.8,.2,1)'; b.style.height=b.dataset.h+'%'; },60+i*50));
-}
-
-/* ═══════════ AGENT CONSOLE (6-stage flow) ═══════════ */
-const A_STAGES = [
-  {id:'task',    n:'Task'},
-  {id:'analyze', n:'Analyze'},
-  {id:'preview', n:'Preview'},
-  {id:'execute', n:'Execute'},
-  {id:'results', n:'Results'}
-];
 const AGENT_MODULES = ['Browser Use','Playwright','Gemini API'];
 const A_SUGGEST = [
   'Research 3 competitors and compare pricing',
@@ -1868,7 +1455,6 @@ const A_SUGGEST = [
   'Build a 30-day social media plan',
   'Summarise this week into a report'
 ];
-
 function aStatus(){
   const a=S.agent||{};
   return {stage:0,status:'pending',goal:'',plan:null,output:'',files:[],actions:[],activity:[], ...a};
@@ -1911,41 +1497,115 @@ function aStepMsg(text, kind){
       <span style="font-size:13px">${text}</span></div>`);
 }
 
-/* ── Preview panel: live activity ── */
-function paintPreview(){
-  const box=document.getElementById('aPreview'); if(!box) return;
+
+function renderDash(){
+  const el=document.getElementById('dashWrap'); if(!el) return;
+  try{ _renderDash(el); }catch(e){ el.innerHTML='<div style="padding:16px;font-size:12px;color:#ff375f">Dashboard error: '+esc(e.message)+'</div>'; console.error(e); }
+}
+function _renderDash(el){
+  const st=store();
+  const runs=(S.runs||[]);
   const a=aStatus();
-  const p=agentStatusPill();
-  const sp=document.getElementById('apvState');
-  if(sp){ sp.textContent=p.label; sp.style.background=p.c+'1f'; sp.style.color=p.c; }
-
-  const stLabel=(k,label,done,active)=>`<div class="flex items-center gap-2 py-1">
-    <span class="w-4 h-4 rounded-full grid place-items-center shrink-0" style="background:${done?'#30d158':active?'#0a84ff':'#e6e6ec'}">
-      <span style="width:5px;height:5px;border-radius:99px;background:${done||active?'#fff':'#c3c3cc'};display:block"></span></span>
-    <span class="text-[11.5px] ${done||active?'':'text-[var(--muted)]'}">${label}</span>
-    ${active?'<span class="live-dot ml-auto"></span>':done?'<span class="text-[10px] ml-auto" style="color:#30d158">done</span>':''}</div>`;
-
-  const stages = [
-    ['analysis','Thinking & analysis', a.stage>=1, a.status==='analyzing'&&a.stage<2],
-    ['plan','Planning', !!(a.plan), a.status==='analyzing'&&!!a.plan],
-    ['browser','Browser actions', (a.activity||[]).some(x=>/browser|page|source/i.test(x.t)) , a.status==='running'],
-    ['steps','Running steps', a.status==='running'||a.status==='completed', false],
-    ['files','Files generated', a.status==='completed', false],
-    ['result','Final result', a.status==='completed', false]
+  const openTasks = (a.goal && a.status!=='completed' ? 1 : 0);
+  const cards = [
+    {t:'Tasks',      v:runs.length+openTasks, s:openTasks?openTasks+' in progress':'all clear', c:'#0a84ff', i:'list-checks'},
+    {t:'Agent Runs', v:runs.length,           s:runs.length?'latest '+new Date(runs[0].at).toLocaleDateString():'none yet', c:'#bf5af2', i:'bot'},
+    {t:'Files',      v:st.files.length,       s:st.files.length?'ready to download':'empty', c:'#ff9f0a', i:'folder'}
   ];
+  const hour=new Date().getHours();
+  const hi = hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
 
-  box.innerHTML = `
-    <div class="mb-2">${stages.map(([k,l,d,act])=>stLabel(k,l,d,act)).join('')}</div>
-    <div class="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">Live activity</div>
-    <div id="aActivity" class="flex flex-col gap-1 mb-2"></div>
-    ${a.output?`<div class="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">${a.status==='completed'?'Result':'Output preview'}</div>
-      <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,.9);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)">${a.status==='completed'?a.output:'<div class="text-[11.5px] text-[var(--muted)]">Full output unlocks after approval.</div>'}</div>`:''}
-    ${a.files&&a.files.length?`<div class="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mt-2.5 mb-1.5">Files</div>
-      ${a.files.map(f=>`<div class="flex items-center gap-1.5 py-0.5">${icon('file','w-3 h-3','#0a84ff')}<span class="text-[11px] truncate">${esc(f)}</span></div>`).join('')}`:''}`;
-  (a.activity||[]).forEach(x=>actLine(x.t,x.k,true));
-  document.getElementById('aApproveWrap').classList.toggle('hidden', a.status!=='ready');
+  el.innerHTML = `
+    <div class="flex items-end justify-between gap-3 mb-5 anim">
+      <div class="min-w-0">
+        <h1 class="text-[27px] sm:text-[32px] font-semibold tracking-tight leading-tight">${hi}</h1>
+        <p class="text-[12.5px] text-[var(--muted)] mt-1 truncate">${S.company||'VisaHOBe'} · ${S.mode==='local'?'Local engine':'Cloud engine'}</p>
+      </div>
+      <button class="btn-primary px-4 py-2.5 text-[12.5px] font-medium press shrink-0 whitespace-nowrap" onclick="go('agent')">New task</button>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2.5 mb-5">
+      ${cards.map((c,i)=>`
+        <button class="dashcard lg card lift anim press text-left" style="padding:15px;animation-delay:${i*40}ms" onclick="go('agent')">
+          <div class="flex items-start justify-between mb-3">
+            <span class="w-9 h-9 rounded-xl grid place-items-center" style="background:${c.c}16">${icon(c.i,'w-4 h-4',c.c)}</span>
+            ${icon('arrow-up-right','w-3.5 h-3.5','#c3c3cc')}
+          </div>
+          <div class="text-[24px] font-semibold tracking-tight leading-none">${c.v}</div>
+          <div class="text-[12px] font-medium mt-1.5">${c.t}</div>
+          <div class="text-[10.5px] text-[var(--muted)] mt-0.5">${c.s}</div>
+        </button>`).join('')}
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-2.5">
+      <div class="lg card anim in" style="padding:15px">
+        <div class="text-[13px] font-semibold mb-2.5">Start here</div>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="text-left px-3.5 py-3 rounded-xl press" style="background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="go('chat')">
+            <div class="flex items-center gap-2 mb-1"><span class="w-6 h-6 rounded-lg grid place-items-center" style="background:rgba(10,132,255,.12)">${icon('message-circle','w-3.5 h-3.5','#0a84ff')}</span>
+            <span class="text-[12.5px] font-semibold">Chat</span></div>
+            <span class="text-[11px] text-[var(--muted)]">Fast answers</span>
+          </button>
+          <button class="text-left px-3.5 py-3 rounded-xl press" style="background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="go('agent')">
+            <div class="flex items-center gap-2 mb-1"><span class="w-6 h-6 rounded-lg grid place-items-center" style="background:rgba(191,90,242,.12)">${icon('bot','w-3.5 h-3.5','#bf5af2')}</span>
+            <span class="text-[12.5px] font-semibold">Agent</span></div>
+            <span class="text-[11px] text-[var(--muted)]">Runs real tasks</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lg card anim in" style="padding:15px">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-[13px] font-semibold">Recent runs</div>
+          <button class="text-[11px] font-medium" style="color:#0a84ff" onclick="go('agent')">Open Agent →</button>
+        </div>
+        ${runs.length ? runs.slice(0,3).map(r=>`<div class="flex items-center gap-2.5 py-1.5">
+          <span class="w-6 h-6 rounded-lg grid place-items-center shrink-0" style="background:rgba(48,209,88,.12)">${icon('check','w-3 h-3','#1d9b41')}</span>
+          <div class="flex-1 min-w-0"><div class="text-[12px] font-medium truncate">${esc(r.task)}</div>
+          <div class="text-[10.5px] text-[var(--muted)]">${new Date(r.at).toLocaleString()}</div></div></div>`).join('')
+        : '<div class="text-[12px] text-[var(--muted)] py-2">No runs yet — start one in Agent.</div>'}
+      </div>
+    </div>`;
+  refreshIcons();
+  requestAnimationFrame(()=>el.querySelectorAll('.anim').forEach(n=>n.classList.add('in')));
+}
+
+function paintPreview(){
+  const a=aStatus();
+  const sp=document.getElementById('apvState');
+  const c={pending:'#8a8a94',analyzing:'#0a84ff',ready:'#ff9f0a',running:'#0a84ff',completed:'#30d158',failed:'#ff375f'}[a.status]||'#8a8a94';
+  const lbl={pending:'idle',analyzing:'analyzing',ready:'awaiting approval',running:'running',completed:'done',failed:'failed'}[a.status]||'idle';
+  if(sp){ sp.textContent=lbl; sp.style.background=c+'1f'; sp.style.color=c; }
+
+  const total=(a.plan&&a.plan.length)||0;
+  const p = a.status==='completed'?100 : a.status==='running'? Math.min(95, 18+Math.round(((a.stage||3)*2-2)/(Math.max(1,total*2))*70)) : a.status==='ready'?15 : a.status==='analyzing'?8 : 0;
+  const bar=document.getElementById('apvBar'), pct=document.getElementById('apvPct');
+  if(bar){ bar.style.transition='width .45s cubic-bezier(.2,.8,.2,1)'; bar.style.width=p+'%'; }
+  if(pct) pct.textContent=p+'%';
+
+  const think=document.getElementById('apvThink');
+  if(think) think.textContent = a.plan ? 'Task understood · '+total+' steps planned' : a.goal ? 'Reading the task…' : '—';
+  const act=document.getElementById('apvAction');
+  const last=(a.activity&&a.activity.length)? a.activity[a.activity.length-1].t : '';
+  if(act) act.textContent = a.status==='completed' ? 'Finished' : (last? last.replace(/^\S+\s/,'') : a.status==='ready'?'Waiting for approval':'—');
+  const br=document.getElementById('apvBrowser');
+  if(br) br.textContent = S.bbKey ? 'Browser Use · connected' : 'not connected';
+
+  const files=document.getElementById('apvFiles');
+  if(files) files.innerHTML = (a.files&&a.files.length)
+    ? a.files.map(f=>`<div class="flex items-center gap-1.5">${icon('file','w-3 h-3','#0a84ff')}<span class="text-[11px] truncate">${esc(f)}</span>
+        <span class="text-[9px] ml-auto shrink-0" style="color:${a.status==='completed'?'#30d158':'#9a9aa6'}">${a.status==='completed'?'saved':'planned'}</span></div>`).join('')
+    : '<div class="text-[11px] text-[var(--muted)]">None yet</div>';
+
+  const res=document.getElementById('apvResult');
+  if(res) res.innerHTML = (a.status==='completed' && a.output)
+    ? `<div style="color:#1b1b22">${esc((a.output||'').replace(/<[^>]+>/g,' ').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,'').replace(/\s+/g,' ').trim().slice(0,170))}…</div>`
+    : `<span>${a.status==='ready'?'Approve to execute and produce the result.':'Waiting for a task.'}</span>`;
+
+  const aw=document.getElementById('aApproveWrap'); if(aw) aw.classList.toggle('hidden', a.status!=='ready');
   refreshIcons();
 }
+
 function actLine(text, kind, replay){
   const box=document.getElementById('aActivity'); if(!box) return;
   const map={info:'#0a84ff',ok:'#30d158',warn:'#ff9f0a',muted:'#9a9aa6'};
@@ -1994,7 +1654,7 @@ async function agentSend(){
   const type=taskType(goal);
   const plan=(STEPS[type]||STEPS.default);
   const slug=(goal.toLowerCase().match(/[a-z0-9]+/g)||['task']).slice(0,4).map(w=>w[0].toUpperCase()+w.slice(1)).join('_');
-  const files = type==='proposal' ? [slug+'_Proposal.md','Pricing_Sheet.csv']
+  const files = type==='proposal' ? [slug+'.md','Pricing_Sheet.csv']
               : type==='data' ? [slug+'_Summary.csv','Report.md']
               : type==='research' ? [slug+'_Brief.md'] : [slug+'.md'];
 
@@ -2075,7 +1735,6 @@ async function agentApprove(){
   agentBusy=false;
 }
 
-
 /* ═══════════ SECTION DATA & RENDERERS ═══════════ */
 /* ═══════════ REAL WORKSPACE STORE ═══════════ */
 function store(){ S.store = S.store || {files:[], docs:[], reports:[], social:[], activity:{}}; return S.store; }
@@ -2125,23 +1784,6 @@ function downloadText(name, text){
   setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
-function rBrowser(){
-  return sHead('🌐 Cloud Browser','A real Chrome session your agent drives — screenshots and steps appear live.',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="newBrowserTask()">${icon('plus','w-3.5 h-3.5')} New task</button>`) +
-    sBox(`<div class="flex items-center gap-2.5 mb-3">
-        <span class="w-2 h-2 rounded-full bg-[var(--green)] animate-pulse"></span>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-medium truncate" id="brUrl">about:blank — no session</div>
-        <div class="text-[10.5px] text-[var(--muted)]" id="brMeta">Idle · US proxy · isolated</div></div>
-        <span class="pill" style="background:rgba(48,209,88,.12);color:#1d9b41">ready</span>
-      </div>
-      <div id="brCanvas" class="rounded-xl overflow-hidden grid place-items-center text-center" style="aspect-ratio:16/10;background:linear-gradient(135deg,#f4f6ff,#fdf6ff)">
-        <div>
-          ${icon('globe','w-8 h-8','#c3c3cc')}
-          <div class="text-[12px] text-[var(--muted)] mt-2">Start a task and the page renders here.</div>
-        </div>
-      </div>`) +
-    `<div class="grid sm:grid-cols-3 gap-2 mt-2" id="brCards"></div>`;
-}
 function rFiles(){
   const st=store();
   return sHead('Files', st.files.length? st.files.length+' files' : 'Nothing here yet',
@@ -2172,19 +1814,6 @@ function openFile(id){
   downloadText(f.n, f.content||'');
 }
 
-function rDocs(){
-  const st=store();
-  return sHead('Documents', st.docs.length? st.docs.length+' documents' : 'Nothing here yet',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="newDoc()">${icon('sparkles','w-3.5 h-3.5')} New document</button>`) +
-    (st.docs.length ? `<div class="grid sm:grid-cols-2 gap-2">` + st.docs.map(d=>sBox(`<div class="flex items-start gap-3">
-        <div class="iconbox" style="background:rgba(50,173,230,.12)">${icon('file-text','w-4 h-4','#32ade6')}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-semibold truncate">${esc(d.n)}</div>
-        <div class="text-[11px] text-[var(--muted)] mt-0.5 line-clamp-2">${esc(d.d)}</div>
-        <div class="text-[10px] text-[var(--muted)] mt-1">${new Date(d.at).toLocaleString()}</div></div>
-        <button class="text-[11px] font-medium shrink-0" style="color:#0a84ff" onclick="openDoc('${d.id}')">Open</button>
-      </div>`)).join('') + `</div>`
-      : emptyState('file-text','No documents yet','Ask the agent for a proposal, SOP or letter — it is saved here.','newDoc()','Create one'));
-}
 function openDoc(id){
   const d=store().docs.find(x=>x.id===id); if(!d) return;
   modal(d.n, `<div class="text-[12.5px] whitespace-pre-wrap max-h-[45vh] overflow-auto">${esc(d.body||'')}</div>`,
@@ -2200,19 +1829,6 @@ function newDoc(){
     }}]);
 }
 
-function rReports(){
-  const st=store();
-  return sHead('Reports', st.reports.length? st.reports.length+' reports' : 'Nothing here yet',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="newReport()">${icon('bar-chart-3','w-3.5 h-3.5')} New report</button>`) +
-    (st.reports.length ? `<div class="grid sm:grid-cols-2 gap-2">` + st.reports.map(r=>sBox(`<div class="flex items-center gap-3">
-        <div class="iconbox" style="background:rgba(48,209,88,.12)">${icon('bar-chart-3','w-4 h-4','#30d158')}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-medium truncate">${esc(r.n)}</div>
-        <div class="text-[10.5px] text-[var(--muted)] truncate">${esc(r.d)}</div>
-        <div class="text-[10px] text-[var(--muted)] mt-0.5">${new Date(r.at).toLocaleString()}</div></div>
-        <button class="shrink-0" onclick="openReport('${r.id}')">${icon('chevron-right','w-4 h-4','#c3c3cc')}</button>
-      </div>`)).join('') + `</div>`
-      : emptyState('bar-chart-3','No reports yet','Ask the agent for a weekly summary and it is saved here.','newReport()','Build one'));
-}
 function openReport(id){
   const r=store().reports.find(x=>x.id===id); if(!r) return;
   modal(r.n, `<div class="text-[12.5px] whitespace-pre-wrap max-h-[45vh] overflow-auto">${esc(r.body||'')}</div>`,
@@ -2223,73 +1839,13 @@ function newReport(){
   setTimeout(()=>agentSend(),200);
 }
 
-function rAnalytics(){
-  const st=store();
-  const bars=weekBars();
-  const max=Math.max(1,...bars.map(b=>b.v));
-  const runs=(S.runs||[]).length;
-  const files=st.files.length, docs=st.docs.length, reports=st.reports.length, posts=st.social.length;
-  const weekTotal=bars.reduce((a,b)=>a+b.v,0);
-  return sHead('Analytics','Everything you have actually done in this workspace.') +
-    `<div class="grid grid-cols-2 gap-2">
-      ${sStat('Agent runs',String(runs),'#0a84ff','activity')}
-      ${sStat('Files',String(files),'#ff9f0a','folder')}
-      ${sStat('Documents',String(docs),'#32ade6','file-text')}
-      ${sStat('Reports',String(reports),'#30d158','bar-chart-3')}
-    </div>` +
-    sBox(`<div class="flex items-center justify-between mb-3">
-        <div class="text-[12px] font-semibold">Activity · last 7 days</div>
-        <span class="pill" style="background:rgba(10,132,255,.1);color:#0a6bd0">${weekTotal} actions</span></div>
-      <div class="flex items-end gap-2" style="height:140px">${bars.map(b=>`
-        <div class="flex-1 flex flex-col items-center gap-1.5 h-full">
-          <div class="grow w-full flex items-end" style="min-height:0"><div class="growbar w-full rounded-t-md" data-h="${Math.round(b.v/max*100)||2}" style="height:4%;background:linear-gradient(180deg,#5ac8fa,#0a84ff)"></div></div>
-          <span class="text-[9.5px] text-[var(--muted)]">${b.l}</span>
-        </div>`).join('')}</div>
-      ${weekTotal?'':'<div class="text-[11px] text-[var(--muted)] mt-2">No activity yet — run an agent task.</div>'}`) +
-    sBox(`<div class="text-[12px] font-semibold mb-2">Social posts drafted</div>
-      <div class="text-[20px] font-semibold">${posts}</div>
-      <div class="text-[11px] text-[var(--muted)]">Saved from the Social Media workspace</div>`);
-}
-
-function rEmail(){
-  return sHead('📧 Email','Outreach, follow-ups and replies — written for you, never sent without approval.') +
-    `<div class="grid sm:grid-cols-2 gap-2">` +
-    [['Cold outreach — 3 versions','Personalised opener, one ask','#0a84ff','send'],
-     ['Follow-up in 10 days','Short, friendly, no guilt','#ff9f0a','repeat'],
-     ['Reply to visa enquiry','Answers + next steps + docs list','#30d158','reply'],
-     ['Interview invite','Slots, format, what to prepare','#bf5af2','calendar-check']]
-     .map(([t,d,c,i])=>sBox(`<div class="flex items-start gap-3">
-        <div class="iconbox" style="background:${c}1a">${icon(i,'w-4 h-4',c)}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-semibold">${t}</div>
-        <div class="text-[11px] text-[var(--muted)] mt-0.5">${d}</div></div>
-        <button class="text-[11px] font-medium shrink-0" style="color:#0a84ff" onclick="askAgent('${t}')">Draft</button>
-      </div>`)).join('') + `</div>`;
-}
 const PLATFORMS = [
   {p:'Facebook', i:'facebook', c:'#1877f2'},{p:'Instagram', i:'instagram', c:'#e1306c'},
   {p:'LinkedIn', i:'linkedin', c:'#0a66c2'},{p:'X', i:'twitter', c:'#111114'},
   {p:'TikTok', i:'music-2', c:'#111114'},{p:'YouTube', i:'youtube', c:'#ff0000'},
   {p:'Threads', i:'at-sign', c:'#111114'}
 ];
-function rSocial(){
-  const st=store();
-  return sHead('Social Media','Pick a platform, write a post — it is saved to your queue and downloadable.',
-    `<button class="btn-glass px-3 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="go(\'agent\')">${icon('sparkles','w-3.5 h-3.5')} Let agent write</button>`) +
-    `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">` + PLATFORMS.map(p=>sBox(`<div class="text-center">
-        <div class="w-9 h-9 mx-auto rounded-xl grid place-items-center mb-2" style="background:${p.c}14">${icon(p.i,'w-4 h-4',p.c)}</div>
-        <div class="text-[12px] font-semibold">${p.p}</div>
-        <div class="text-[10px] text-[var(--muted)] mt-0.5">${st.social.filter(x=>x.p===p.p).length} drafted</div>
-        <button class="text-[10px] font-medium px-2 py-1 rounded-lg mt-2 w-full" style="background:${p.c}14;color:${p.c}" onclick="composePost('${p.p}')">Write post</button>
-      </div>`)).join('') + `</div>` +
-    sBox(`<div class="flex items-center justify-between mb-2">
-        <div class="text-[12px] font-semibold">Queue</div>
-        <span class="text-[10.5px] text-[var(--muted)]">${st.social.length} posts</span></div>` +
-      (st.social.length ? st.social.slice(0,8).map(x=>`<div class="py-1.5 border-b" style="border-color:rgba(0,0,0,.05)">
-        <div class="flex items-center gap-1.5"><span class="pill" style="background:rgba(0,0,0,.05);color:#5b5b66">${esc(x.p)}</span>
-        <span class="text-[10px] text-[var(--muted)] ml-auto">${new Date(x.at).toLocaleString()}</span></div>
-        <div class="text-[11.5px] mt-1 line-clamp-2">${esc(x.text)}</div></div>`).join('')
-      : '<div class="text-[11.5px] text-[var(--muted)] py-2">No posts yet.</div>'));
-}
+
 function composePost(platform){
   modal(platform+' post', `<textarea id="spost" rows="5" placeholder="What should it say?" class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px] scrollarea" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)"></textarea>
     <button class="btn-glass w-full mt-2 py-2 text-[12px] font-medium press" onclick="aiPost('${platform}')">Write it for me</button>`,
@@ -2310,83 +1866,6 @@ async function aiPost(platform){
   }catch(e){ ta.value=''; toast('Failed: '+String(e.message).slice(0,40)); }
 }
 
-function rCRM(){
-  return sHead('👥 CRM','Every lead, stage and value — updated by your agent as it works.') +
-    `<div class="flex flex-col gap-2">` + DEMO.crm.map(c=>sBox(`<div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full grid place-items-center text-[12px] font-semibold" style="background:${c.c}1a;color:${c.c}">${c.n.split(' ').map(x=>x[0]).join('')}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-semibold">${c.n}</div>
-        <div class="text-[10.5px] text-[var(--muted)]">${c.s}</div></div>
-        <div class="text-right"><div class="text-[12px] font-semibold">${c.v}</div>
-        <span class="pill" style="background:${c.c}18;color:${c.c}">${c.st}</span></div>
-      </div>`)).join('') + `</div>`;
-}
-function rWorkflows(){
-  return sHead('⚙️ Workflows','Repeatable automations: trigger, steps, verification, delivery.') +
-    `<div class="flex flex-col gap-2">` + DEMO.workflows.map(w=>sBox(`<div class="flex items-center gap-3">
-        <div class="iconbox" style="background:${w.c}1a">${icon(w.i,'w-4 h-4',w.c)}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-medium">${w.n}</div>
-        <div class="text-[10.5px] text-[var(--muted)]">${w.runs} runs</div></div>
-        <span class="pill" style="background:${w.c}18;color:${w.c}">${w.st}</span>
-      </div>`)).join('') + `</div>`;
-}
-function rTasks(){
-  const runs=(S.runs||[]);
-  const a=aStatus();
-  const rows=[];
-  if(a.goal) rows.push({t:a.goal, st:(a.status==='completed'?'completed':a.status==='ready'?'reviewing':a.status==='analyzing'?'analyzing':a.status==='running'?'running':'pending'), at:'now'});
-  runs.slice(0,12).forEach(r=>rows.push({t:r.task, st:'completed', at:new Date(r.at).toLocaleString()}));
-  if(!rows.length) rows.push({t:'No tasks yet — start one from Agent', st:'pending', at:'—'});
-  return sHead('📋 Tasks','Every execution with its live status.',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="go('agent')">New task</button>`) +
-    `<div class="grid grid-cols-5 gap-1.5 mb-2.5">${['pending','analyzing','running','completed','failed'].map(st=>`
-      <div class="lg card" style="padding:8px 6px;text-align:center">
-        <div class="text-[16px] font-semibold leading-none">${rows.filter(r=>r.st===st).length}</div>
-        <div class="text-[9px] mt-1" style="color:${STATUS_COLORS[st]}">${st}</div></div>`).join('')}</div>` +
-    `<div class="flex flex-col gap-2">` + rows.map(r=>sBox(`<div class="flex items-center gap-3">
-        <span class="w-2 h-2 rounded-full shrink-0" style="background:${STATUS_COLORS[r.st]}"></span>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-medium truncate">${esc(r.t)}</div>
-        <div class="text-[10.5px] text-[var(--muted)]">${esc(r.at)}</div></div>
-        ${statusPill(r.st)}
-      </div>`)).join('') + `</div>`;
-}
-function rResearch(){
-  return sHead('🔎 Research','Multi-source answers with dates and sources attached.',
-    `<button class="btn-primary tinted px-3.5 py-1.5 text-[12px] font-medium press shrink-0 whitespace-nowrap" onclick="askAgent('Compare the top 3 visa consultancy markets to expand into this year')">${icon('search','w-3.5 h-3.5')} Research</button>`) +
-    `<div class="flex flex-col gap-2">` + DEMO.research.map(r=>sBox(`<div class="flex items-start gap-3">
-        <div class="iconbox" style="background:rgba(94,92,230,.1)">${icon('search','w-4 h-4','#5e5ce6')}</div>
-        <div class="flex-1 min-w-0"><div class="text-[12.5px] font-medium">${r.q}</div>
-        <div class="text-[10.5px] text-[var(--muted)] mt-0.5">${r.s}</div></div>
-        ${icon('external-link','w-4 h-4','#c3c3cc')}</div>`)).join('') + `</div>`;
-}
-function rPDF(){
-  return sHead('📑 PDF Center','Turn any answer, document or report into a clean PDF.') +
-    sBox(`<div class="text-center py-6">
-      ${icon('file-down','w-7 h-7','#0a84ff')}
-      <div class="text-[13px] font-semibold mt-2">Generate a PDF</div>
-      <div class="text-[11.5px] text-[var(--muted)] mt-1 mb-3">Open any chat answer and tap Export → PDF.</div>
-      <button class="btn-primary tinted px-4 py-2 text-[12px] font-medium press" onclick="askAgent('Prepare my document pack as a printable PDF outline')">Start</button></div>`) +
-    `<div class="mt-2">`+sBox(`<div class="text-[12px] font-semibold mb-1">Recent exports</div>`+
-      sList(['Client proposal — Acme (2 pages)','Visa checklist — UAE (1 page)','Weekly operations report (4 pages)'],'file-down','#0a84ff'))+`</div>`;
-}
-function rStudio(){
-  return sHead('🎨 Content Studio','Posts, scripts, ads and emails in your brand voice.') +
-    `<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">` + DEMO.studio.map(c=>sBox(`
-        <div class="flex items-center justify-between mb-2"><span class="pill" style="background:${c.c}18;color:${c.c}">${c.tag}</span>${icon(c.i,'w-4 h-4',c.c)}</div>
-        <div class="text-[12.5px] font-semibold leading-snug">${c.t}</div>
-        <button class="text-[11px] font-medium mt-2" style="color:#0a84ff" onclick="askAgent('${c.t}')">Generate</button>`)).join('') + `</div>`;
-}
-function rBusiness(){
-  return sHead('🏢 Business Hub','Offers, team, revenue and compliance at a glance.') +
-    `<div class="grid sm:grid-cols-2 gap-2 mb-2">
-      ${sStat('Revenue month','$18,420','#30d158','trending-up')}
-      ${sStat('Active clients','23','#0a84ff','users')}
-      ${sStat('Open cases','17','#bf5af2','folder-open')}
-      ${sStat('Tasks due','6','#ff9f0a','clock')}</div>` +
-    `<div class="grid sm:grid-cols-2 gap-2 mt-2">` + DEMO.business.map(b=>sBox(`<div class="flex items-start gap-3">
-        <div class="iconbox" style="background:${b.c}1a">${icon(b.i,'w-4 h-4',b.c)}</div>
-        <div class="flex-1"><div class="text-[12.5px] font-semibold">${b.n}</div>
-        <div class="text-[11px] text-[var(--muted)] mt-0.5">${b.d}</div></div></div>`)).join('') + `</div>`;
-}
 function rSettings(){
   return sHead('🔧 Settings','Runtime, keys, install and access.') +
     `<div class="flex flex-col gap-2">` +
@@ -2412,13 +1891,12 @@ function rSettings(){
     `</div>`;
 }
 
-const SECTIONS = {browser:rBrowser, files:rFiles, documents:rDocs, reports:rReports, analytics:rAnalytics,
-  email:rEmail, social:rSocial, crm:rCRM, workflows:rWorkflows, tasks:rTasks, research:rResearch,
-  pdf:rPDF, studio:rStudio, business:rBusiness, settings:rSettings};
+const SECTIONS = {files:rFiles, settings:rSettings};
 function renderSection(v){
   const fn = SECTIONS[v]; if(!fn) return;
   const el = document.querySelector('#view-'+v+' [id$="Wrap"]'); if(!el) return;
   el.innerHTML = fn(); refreshIcons();
+  requestAnimationFrame(()=>el.querySelectorAll('.anim').forEach(n=>n.classList.add('in')));
   setTimeout(()=>{ el.querySelectorAll('.anim').forEach(n=>n.classList.add('in'));
     el.querySelectorAll('.growbar').forEach((b,i)=>setTimeout(()=>{ b.style.transition='height .7s cubic-bezier(.2,.8,.2,1)'; b.style.height=b.dataset.h+'%'; },60+i*60)); },60);
 }
@@ -2426,47 +1904,17 @@ function askAgent(text){ go('chat'); $('#prompt').value=text; $('#prompt').focus
 function newBrowserTask(){ askAgent('Open the official government page and check the current visa requirements, then summarise them'); }
 
 /* ═══════════ SKILLS ═══════════ */
-function renderSkills(){
-  const q = ($('#skillSearch')?.value||'').toLowerCase();
-  $('#skillGrid').innerHTML = SKILLS.map((s,i)=>{
-    if(q && !s.name.toLowerCase().includes(q) && !s.desc.toLowerCase().includes(q)) return '';
-    const on = S.skills[i];
-    return `<div class="lg card lift" style="padding:14px">
-      <div class="flex items-start justify-between gap-2 mb-2">
-        <div class="iconbox" style="background:${s.color}1a">${icon(s.icon,'w-4 h-4',s.color)}</div>
-        <div class="toggle ${on?'on':''}" onclick="toggleSkill(${i})"></div>
-      </div>
-      <div class="text-[13px] font-semibold mb-0.5">${esc(s.name)}</div>
-      <div class="text-[11.5px] text-[var(--muted)] leading-snug">${esc(s.desc)}</div>
-    </div>`;
-  }).join('');
-  refreshIcons(); renderSideSkills(); renderBuilder();
-}
+
 function toggleSkill(i){
   S.skills[i]=!S.skills[i]; save();
   toast(SKILLS[i].name+(S.skills[i]?' enabled':' disabled'));
-  renderSkills(); setSuggestions();
+  setSuggestions();
 }
 
 /* ═══════════ BRAIN ═══════════ */
-function renderBrain(){
-  const e = ENGINES.find(x=>x.id===S.engine) || ENGINES[1];
-  const be=document.getElementById('brainEngine'); if(be) be.textContent=e.id;
-  const bs=document.getElementById('brainEngineSub'); if(bs) bs.textContent=e.desc;
-  const mb=document.getElementById('memBig'); if(mb) mb.textContent=S.mem.length;
-  const ctx=Math.min(96,8+S.mem.length*3+SKILLS.filter((s,i)=>S.skills[i]).length*2);
-  const cb=document.getElementById('brainCtxBar'); if(cb) cb.style.width=ctx+'%';
-  const ct=document.getElementById('brainCtxTxt'); if(ct) ct.textContent=ctx+'%';
-  const ml=document.getElementById('memList');
-  if(ml) ml.innerHTML = S.mem.length ? S.mem.map((m,i)=>`
-    <div class="flex items-center gap-2 px-3 py-2 rounded-xl" style="background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.05)">
-      ${icon('sparkle','w-3.5 h-3.5','#bf5af2')}<span class="text-[12.5px] flex-1">${esc(m)}</span>
-      <button class="w-6 h-6 rounded-full grid place-items-center hover:bg-black/5" onclick="delMem(${i})">${icon('x','w-3.5 h-3.5','#9a9aa6')}</button>
-    </div>`).join('') : `<div class="text-[12px] text-[var(--muted)] py-2">Nothing yet. Tell me something about you and it stays.</div>`;
-  refreshIcons();
-}
-function addMem(text){ if(!text) return; S.mem.unshift(text); save(); renderBrain(); renderSideSkills(); }
-function delMem(i){ S.mem.splice(i,1); save(); renderBrain(); renderSideSkills(); }
+
+function addMem(text){ if(!text) return; S.mem.unshift(text); save(); renderSideSkills(); }
+function delMem(i){ S.mem.splice(i,1); save(); renderSideSkills(); }
 function openMem(){
   modal('Add to memory','<input id="memIn" placeholder="e.g. My company is Acme, I work in GMT+5:30" class="w-full px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px]" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)">',
     [{label:'Cancel',cls:'btn-glass',fn:closeModal},{label:'Remember',cls:'btn-primary tinted',fn:()=>{addMem($('#memIn').value.trim());closeModal();toast('Saved to brain')}}]);
@@ -2474,78 +1922,20 @@ function openMem(){
 }
 
 /* ═══════════ BUILDER ═══════════ */
-function renderBuilder(){
-  const n=document.getElementById('bName'); if(n&&n!==document.activeElement) n.value=S.name;
-  const r=document.getElementById('bRole'); if(r&&r!==document.activeElement) r.value=S.role;
-  const ins=document.getElementById('bInstr'); if(ins&&ins!==document.activeElement){ ins.value=S.instr; }
-  const il=document.getElementById('instrLen'); if(il) il.textContent=(S.instr||'').length;
-  const er=document.getElementById('engineRow'); if(er) er.innerHTML = ENGINES.map(e=>`
-    <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition" style="background:${S.engine===e.id?'rgba(255,255,255,.95)':'rgba(255,255,255,.55)'};box-shadow:inset 0 0 0 .5px rgba(0,0,0,.08)" onclick="setEngine('${e.id}')">
-      <span class="w-2 h-2 rounded-full" style="background:${e.color}"></span>
-      <div class="flex-1"><div class="text-[12.5px] font-medium">${e.id}</div><div class="text-[10.5px] text-[var(--muted)]">${e.desc}</div></div>
-      ${S.engine===e.id?icon('check','w-4 h-4','#0a84ff'):''}
-    </div>`).join('');
-  const em=document.getElementById('emojiRow'); if(em) em.innerHTML = EMOJIS.map(x=>`
-    <button class="w-8 h-8 rounded-xl grid place-items-center text-[15px] transition" style="background:${S.emoji===x?'rgba(10,132,255,.14)':'rgba(255,255,255,.75)'};box-shadow:inset 0 0 0 .5px rgba(0,0,0,.07)" onclick="setEmoji('${x}')">${x}</button>`).join('');
-  const ps=document.getElementById('provState');
-  if(ps) ps.textContent = S.key ? (providerOf()==='gemini'?'Gemini · '+S.model:'Key connected · '+S.model) : 'Connect Gemini key';
-  const rr=document.getElementById('runtimeRow');
-  if(rr) rr.innerHTML = ['cloud','local'].map(m=>`
-    <div class="px-3 py-2.5 rounded-xl cursor-pointer" style="background:${S.mode===m?'rgba(255,255,255,.95)':'rgba(255,255,255,.6)'};box-shadow:inset 0 0 0 .5px ${S.mode===m?(m==='local'?'rgba(191,90,242,.5)':'rgba(10,132,255,.45)'):'rgba(0,0,0,.08)'}" onclick="setMode('${m}')">
-      <div class="flex items-center gap-1.5 text-[12px] font-semibold">${icon(m==='cloud'?'cloud':'hard-drive','w-3.5 h-3.5',m==='cloud'?'#0a84ff':'#bf5af2')}${m==='cloud'?'Cloud':'Local'}</div>
-      <div class="text-[10.5px] text-[var(--muted)] mt-0.5">${m==='cloud'?'API model':'On-device'}</div>
-    </div>`).join('');
-  const bs=document.getElementById('builderSkills');
-  if(bs) bs.innerHTML = SKILLS.map((s,i)=>`
-    <div class="flex items-center gap-2 px-2.5 py-2 rounded-xl" style="background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.05)">
-      ${icon(s.icon,'w-3.5 h-3.5',s.color)}<span class="text-[11.5px] flex-1 truncate">${esc(s.name)}</span>
-      <div class="toggle ${S.skills[i]?'on':''}" style="width:34px;height:20px" onclick="toggleSkill(${i})"></div>
-    </div>`).join('');
-  refreshIcons();
-}
+
 function setName(v){ S.name=v||'Agent'; save(); syncIdentity(); renderSideSkills(); }
 function setRole(v){ S.role=v||'Assistant'; save(); syncIdentity(); }
 function setInstr(v){ S.instr=v; S._typing=true; save(); const il=document.getElementById('instrLen'); if(il) il.textContent=v.length; }
-function setEngine(id){ S.engine=id; save(); renderBuilder(); syncIdentity(); renderSideSkills(); renderBrain(); }
-function setEmoji(e){ S.emoji=e; save(); renderBuilder(); syncIdentity(); }
-function presetInstr(k){ S.instr=PRESETS[k]; save(); renderBuilder(); toast('Instructions loaded'); }
+function setEngine(id){ S.engine=id; save(); syncIdentity(); renderSideSkills(); }
+function setEmoji(e){ S.emoji=e; save(); syncIdentity(); }
+function presetInstr(k){ S.instr=PRESETS[k]; save(); toast('Instructions loaded'); }
 function resetAgent(){ S=DEFAULT(); save(); initAll(); toast('Agent reset'); }
 
 /* ═══════════ TOOLS ═══════════ */
-function renderTools(){
-  const g=document.getElementById('toolGrid'); if(!g) return;
-  g.innerHTML = TOOLS.map((t,i)=>{
-    const on=S.tools[i];
-    return `<div class="lg card lift">
-      <div class="flex items-start justify-between mb-2">
-        <div class="iconbox" style="background:${t.color}1a">${icon(t.icon,'w-4 h-4',t.color)}</div>
-        <div class="toggle ${on?'on':''}" onclick="S.tools[${i}]=!S.tools[${i}];save();renderTools()"></div>
-      </div>
-      <div class="text-[13px] font-semibold">${esc(t.name)}</div>
-      <div class="text-[11.5px] text-[var(--muted)] mt-0.5">${esc(t.desc)}</div>
-      <div class="mt-2"><span class="pill" style="background:${on?'rgba(48,209,88,.12)':'rgba(0,0,0,.05)'};color:${on?'#1d9b41':'#8a8a94'}">${on?t.perm:'disabled'}</span></div>
-    </div>`;
-  }).join('');
-  const ks=document.getElementById('keyState'); if(ks) ks.textContent = S.mode==='local' ? 'Local mode — everything on this device' : (S.key?'Connected — live cloud replies enabled':'Not connected — using built-in cloud fallback');
-  const kss=document.getElementById('keyStateSide'); if(kss) kss.textContent = S.mode==='local' ? 'Local · private' : (S.key?'Key connected':'No API key');
-  refreshIcons();
-}
 
 /* ═══════════ RUNS ═══════════ */
-function renderRuns(){
-  const el=document.getElementById('runList'); if(!el) return;
-  el.innerHTML = S.runs.length ? S.runs.map(r=>`
-    <div class="lg card" style="padding:13px 15px;display:flex;gap:12px;align-items:center">
-      <div class="iconbox" style="background:rgba(48,209,88,.12)">${icon('check','w-4 h-4','#1d9b41')}</div>
-      <div class="flex-1 min-w-0">
-        <div class="text-[12.5px] font-medium truncate">${esc(r.task)}</div>
-        <div class="text-[10.5px] text-[var(--muted)]">${new Date(r.at).toLocaleString()} · ${esc(r.engine)} · ${(r.ms/1000).toFixed(1)}s</div>
-      </div>
-      <span class="pill" style="background:rgba(48,209,88,.12);color:#1d9b41">done</span>
-    </div>`).join('') : `<div class="lg card text-center py-8 text-[12.5px] text-[var(--muted)]">No runs yet. Ask your agent anything to start the log.</div>`;
-  refreshIcons();
-}
-function clearRuns(){ S.runs=[]; save(); $('#runPill').textContent='0'; renderRuns(); }
+
+function clearRuns(){ S.runs=[]; save(); const r=$('#runPill'); if(r) r.textContent='0'; }
 
 /* ═══════════ MODAL ═══════════ */
 function modal(title,body,btns){
@@ -2599,7 +1989,7 @@ function openKey(){
 }
 async function saveKey(){
   S.key=$('#kIn').value.trim(); S.model=$('#mIn').value.trim()||S.model; S.endpoint=$('#uIn').value.trim()||S.endpoint;
-  save(); renderTools();
+  save();
   if(S.key){
     toast('Testing key…');
     try{ await callModel('Reply with the single word: ok','ping',12); closeModal(); setMode('cloud'); toast('Connected ✓ '+providerOf()+' · '+S.model); }
@@ -2613,7 +2003,7 @@ function openBB(){
     <input id="bbIn" type="password" value="${esc(S.bbKey)}" placeholder="bu_…" class="w-full mt-1 mb-3 px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[13px]" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)">
     <label class="text-[11.5px] font-medium">Agent model</label>
     <input id="bbmIn" value="${esc(S.bbModel)}" class="w-full mt-1 px-3.5 py-2.5 rounded-xl bg-white/90 outline-none text-[12.5px]" style="box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)">`,
-    [{label:'Cancel',fn:closeModal},{label:'Save',cls:'btn-primary',fn:()=>{S.bbKey=$('#bbIn').value.trim();S.bbModel=$('#bbmIn').value.trim()||S.bbModel;save();renderTools();closeModal();toast(S.bbKey?'Cloud browser ready':'Removed')}}]);
+    [{label:'Cancel',fn:closeModal},{label:'Save',cls:'btn-primary',fn:()=>{S.bbKey=$('#bbIn').value.trim();S.bbModel=$('#bbmIn').value.trim()||S.bbModel;save();closeModal();toast(S.bbKey?'Cloud browser ready':'Removed')}}]);
 }
 function openShare(){
   const url = location.origin + location.pathname;
@@ -2626,7 +2016,7 @@ function openShare(){
 
 /* ═══════════ BOOT ═══════════ */
 function initAll(){
-  renderNav(); renderConnectors(); renderDash(); syncIdentity(); renderSideSkills(); renderSkills(); renderBrain(); renderBuilder(); renderTools(); renderRuns(); setSuggestions(); renderTaskTemplates(); setMode(S.mode||'cloud'); renderModeTaskCard(); refreshIcons(); }
+  renderNav(); renderConnectors(); renderDash(); syncIdentity(); renderSideSkills(); setSuggestions(); renderTaskTemplates(); setMode(S.mode||'cloud'); refreshIcons(); }
 function renderModeTaskCard(){ const el=document.getElementById('engineState'); if(el) el.textContent = S.mode==='local'?'Local · on-device':'Cloud · model powered'; }
 window.addEventListener('resize',()=>{ if(window.innerWidth>900){ $('#sidebar').classList.remove('open'); const sc=$('#scrim'); sc.classList.remove('show'); sc.style.opacity=''; } });
 initAll();
